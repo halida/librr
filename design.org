@@ -1,0 +1,3 @@
+* todo
+** search shortcut
+** index method
