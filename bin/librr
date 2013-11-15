@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'librr'
+require 'librr/cmd'
+Librr::CMD.run!
