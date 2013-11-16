@@ -1,6 +1,9 @@
 require 'thor'
+require 'librr/cmd_client'
+require 'librr/settings'
 
 class Librr::CMD < Thor
+  @@client = CmdClient.new('localhost', Settings::RUNNER_PORT)
 
   desc 'start', 'start background process'
   def start
@@ -17,7 +20,7 @@ class Librr::CMD < Thor
   desc 'add DIR', 'add directory for indexing'
   def add(dir)
     puts "indexing: #{dir}"
-    # todo
+    @@client.cmd(:add, dir: File.expand_path(dir))
   end
 
   desc 'remove DIR', 'remove directory from indexing'
