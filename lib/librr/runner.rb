@@ -7,6 +7,33 @@ require 'rack'
 
 EventMachine.kqueue = true if EventMachine.kqueue?
 
+class Indexer
+  FILES = {}
+
+  def index_directory(dir)
+    Dir.glob(File.join(dir, "**/*")).each do |file|
+      next unless File.file?(file)
+      self.index_file(file)
+    end
+  end
+
+  def index_file(file)
+    lines = File.readlines(file)
+    FILES[file] = lines
+  end
+
+  def search(str)
+    FILES.each do |file, lines|
+      lines.each_with_index do |line, index|
+        next unless line.index(str)
+        return [file, index, line]
+      end
+    end
+  end
+end
+
+$indexer = Indexer.new
+
 class DirMonitor
   DIRS = ['/Users/halida/data/workspace/librr']
   OBJS = {}
@@ -19,6 +46,7 @@ class DirMonitor
 
   def add_directory(dir)
     puts "add directory: #{dir}"
+    $indexer.index_directory(dir)
     o = EventMachine.watch_file(dir, DirWatcher)
     OBJS[dir] = o
   end
@@ -74,13 +102,17 @@ class Librr::CmdServer < EM::Connection
     when 'start'
     when 'stop'
     when 'add'
-      EM.next_tick{ $monitor.add_directory(params['dir']) }
+      EM.next_tick{
+        $monitor.add_directory(params['dir'])
+      }
     when 'remove'
-      EM.next_tick{ $monitor.remove_directory(params['dir']) }
+      EM.next_tick{
+        $monitor.remove_directory(params['dir'])
+      }
     when 'list'
       self.dirs
     when 'search'
-      self.search(text)
+      $indexer.search(params['text'])
     end
   end
 end

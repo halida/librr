@@ -35,8 +35,9 @@ class Librr::CMD < Thor
   end
 
   desc 'search STRING', 'search emacs'
-  def search(str)
-    puts "searching: #{str}"
+  def search(text)
+    puts "searching: #{text}"
+    puts @@client.cmd(:search, text: text).join(":")
   end
 
   def self.run!
