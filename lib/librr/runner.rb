@@ -1,9 +1,11 @@
 require 'eventmachine'
 require 'evma_httpserver'
+require 'rb-fsevent'
 
 require 'librr/settings'
 require 'json'
 require 'rack'
+require 'set'
 
 EventMachine.kqueue = true if EventMachine.kqueue?
 
@@ -18,45 +20,74 @@ class Indexer
   end
 
   def index_file(file)
-    lines = File.readlines(file)
+    puts "index file: #{file}"
+    lines = File.readlines(file) rescue []
     FILES[file] = lines
   end
 
   def search(str)
+    result = []
     FILES.each do |file, lines|
       lines.each_with_index do |line, index|
         next unless line.index(str)
-        return [file, index, line]
+        result << [file, index, line]
       end
     end
+    return result
   end
 end
 
 $indexer = Indexer.new
 
-class DirMonitor
-  DIRS = ['/Users/halida/data/workspace/librr']
+module DirMonitor
+  DIRS = Set.new ['/Users/halida/data/workspace/librr']
   OBJS = {}
+  @@pipe = nil
 
-  def start
-    DIRS.each do |dir|
-      self.add_directory(dir)
+  OPTS = ["--file-events"]
+
+  def self.add_directory(dir)
+    puts "add directory: #{dir}"
+    $indexer.index_directory(dir)
+    DIRS.add(dir)
+    self.start
+  end
+
+  def self.remove_directory(dir)
+    puts "remove directory: #{dir}"
+    DIRS.delete(dir)
+    self.start
+  end
+
+  def post_init
+    # count up to 5
+  end
+
+  def receive_data data
+    changes = data.strip.split(':').map(&:strip).reject{|s| s == ''}
+    changes.each do |file|
+      $indexer.index_file(file)
     end
   end
 
-  def add_directory(dir)
-    puts "add directory: #{dir}"
-    $indexer.index_directory(dir)
-    o = EventMachine.watch_file(dir, DirWatcher)
-    OBJS[dir] = o
+  def unbind
+    puts "stopped monitor process.."
   end
 
-  def remove_directory(dir)
-    puts "remove directory: #{dir}"
-    OBJS[dir].stop_watching
+  def self.init
+    DIRS.each do |dir|
+      $indexer.index_directory(dir)
+    end
+    self.start
+  end
+
+  def self.start
+    @pipe.close_connection if @pipe
+    cmd = [FSEvent.watcher_path] + OPTS + DIRS.to_a
+    puts "start monitor process: #{cmd}"
+    @pipe = EM.popen(cmd, DirMonitor)
   end
 end
-
 
 module DirWatcher
   def file_modified
@@ -77,7 +108,7 @@ module DirWatcher
 end
 
 
-$monitor = DirMonitor.new
+$monitor = DirMonitor
 
 class Librr::CmdServer < EM::Connection
   include EM::HttpServer
@@ -121,6 +152,7 @@ class Librr::Runner
   def run
     EventMachine.run {
       EventMachine.start_server "127.0.0.1", Settings::RUNNER_PORT, Librr::CmdServer
+      $monitor.init
     }
   end
 end

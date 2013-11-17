@@ -1,3 +1,12 @@
+* prototype
+** solr search
+** monitor directory file change
+   - X 用rb-fsevent
+     原理用一个命令行：fsevent_watch
+     监控这个命令行工具跑通了！
+   - 用em-dir-watcher(3年没有更新了)
+   - 用其他的  
 * todo
+** save directory change
 ** search shortcut
 ** index method
