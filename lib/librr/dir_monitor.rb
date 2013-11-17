@@ -38,13 +38,6 @@ module DirMonitor
     puts "stopped monitor process.."
   end
 
-  def self.init
-    DIRS.each do |dir|
-      $indexer.index_directory(dir)
-    end
-    self.start
-  end
-
   def self.start
     @pipe.close_connection if @pipe
     cmd = [FSEvent.watcher_path] + OPTS + DIRS.to_a

@@ -15,7 +15,7 @@ class Librr::Runner
     EventMachine.run {
       EventMachine.start_server "127.0.0.1", Settings::RUNNER_PORT, Librr::CmdServer
       $indexer.start
-      $monitor.init
+      $monitor.start
     }
   end
 end

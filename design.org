@@ -1,12 +1,16 @@
 * prototype
-** solr search
-** monitor directory file change
+** DONE solr search
+   CLOSED: [2013-11-17 Sun 14:34]
+** DONE monitor directory file change
+   CLOSED: [2013-11-17 Sun 14:34]
    - X 用rb-fsevent
      原理用一个命令行：fsevent_watch
      监控这个命令行工具跑通了！
    - 用em-dir-watcher(3年没有更新了)
    - 用其他的  
 * todo
+** manage solr
 ** save directory change
 ** search shortcut
 ** index method
+** fix global variables
