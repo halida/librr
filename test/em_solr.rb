@@ -1,12 +1,16 @@
 require 'eventmachine'
 require 'rsolr-async'
 
-rsolr = RSolr.connect(:async, :url => 'http://localhost:8901/solr')
+solr = RSolr.connect(:async, :url => 'http://localhost:8901/solr')
 
-response = rsolr.get 'select', params: {q: '*:*'}
+# delete all
+solr.delete_by_query '*:*'
+solr.commit
 
-solr.add :id=>1, :price=>1.00
+# add
+solr.add id: SecureRandom.uuid, filename: 'ab.rb', linenum: 1, line: 'fdafdsa'
+solr.commit
 
-EventMachine.run {
-  DirMonitor.start
-}
+# query
+solr.get 'select', params: {q: 'line:daf'}
+

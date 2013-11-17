@@ -1,6 +1,7 @@
 require 'eventmachine'
 require 'evma_httpserver'
 require 'rb-fsevent'
+require 'rsolr-async' rescue nil
 
 require 'librr/settings'
 require 'json'
@@ -12,6 +13,12 @@ EventMachine.kqueue = true if EventMachine.kqueue?
 class Indexer
   FILES = {}
 
+  def initialize
+    @solr = RSolr.connect(:async, :url => 'http://localhost:8901/solr')
+    @solr.delete_by_query '*:*'
+    @solr.commit
+  end
+
   def index_directory(dir)
     Dir.glob(File.join(dir, "**/*")).each do |file|
       next unless File.file?(file)
@@ -21,19 +28,17 @@ class Indexer
 
   def index_file(file)
     puts "index file: #{file}"
-    lines = File.readlines(file) rescue []
-    FILES[file] = lines
+    File.readlines(file).each_with_index do |line, num|
+      @solr.add id: SecureRandom.uuid, filename: file, linenum: num, line: line
+    end
+    @solr.commit
   end
 
   def search(str)
-    result = []
-    FILES.each do |file, lines|
-      lines.each_with_index do |line, index|
-        next unless line.index(str)
-        result << [file, index, line]
-      end
+    result = @solr.get 'select', params: {q: "line:#{str}"}
+    result['response']['docs'].map do |row|
+      [row['filename'], row['linenum'], row['line']].flatten
     end
-    return result
   end
 end
 

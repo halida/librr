@@ -41,7 +41,7 @@ class Librr::CMD < Thor
     if results.empty?
       puts "cannot find any result"
     else
-      puts results.join(":")
+      puts results.map{|v| v.join(":")}
     end
   end
 
