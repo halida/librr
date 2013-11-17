@@ -40,7 +40,7 @@ end
 $indexer = Indexer.new
 
 module DirMonitor
-  DIRS = Set.new ['/Users/halida/data/workspace/librr']
+  DIRS = Set.new ['/Users/halida/data/workspace/librr/test']
   OBJS = {}
   @@pipe = nil
 
