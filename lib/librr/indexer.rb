@@ -1,5 +1,6 @@
 require 'eventmachine'
 require 'rsolr-async' rescue nil
+require 'librr/lib'
 
 module SolrManager
   def post_init
@@ -22,8 +23,22 @@ class Indexer
   def start
     Dir.chdir File.join(Dir.pwd, 'solr') do
       solr = 'java -jar start.jar'
-      EM.popen(solr, SolrManager)
-      EM.add_timer(3){ self.after_start }
+      solr_in, solr_out, solr_err = redirect_std do
+        EM.popen(solr, SolrManager)
+      end
+      EM.attach(solr_err, SolrOutHandler, self)
+    end
+  end
+
+  class SolrOutHandler < EventMachine::Connection
+    def initialize(indexer)
+      @indexer = indexer
+    end
+
+    def receive_data(data)
+      if data =~ /Started SocketConnector/
+        EM.next_tick{ @indexer.after_start }
+      end
     end
   end
 
