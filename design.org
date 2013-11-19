@@ -9,13 +9,15 @@
    - 用em-dir-watcher(3年没有更新了)
    - 用其他的  
 * todo
-** manage solr
+** DONE manage solr
+   CLOSED: [2013-11-19 Tue 09:40]
    https://gist.github.com/tokland/535644
    monitor solr process start
 ** save directory change
 ** search shortcut
 ** index method
 ** fix global variables
+** refactor
 * timespending
   tomato time:
   2013-11-14 2 design

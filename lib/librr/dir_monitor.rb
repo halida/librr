@@ -3,8 +3,11 @@ require 'rb-fsevent'
 
 require 'set'
 
+require 'librr/configer'
+
 module DirMonitor
-  DIRS = Set.new ['/Users/halida/data/workspace/librr/test']
+  DIRS = Configer.load_dir_config
+  puts "on monitor: #{DIRS.to_a.to_s}"
   OBJS = {}
   @@pipe = nil
 
@@ -18,12 +21,15 @@ module DirMonitor
     puts "add directory: #{dir}"
     @@indexer.index_directory(dir)
     DIRS.add(dir)
+    Configer.save_dir_config(DIRS)
+    puts "save directory: #{DIRS.to_a.to_s}"
     self.start
   end
 
   def self.remove_directory(dir)
     puts "remove directory: #{dir}"
     DIRS.delete(dir)
+    Configer.save_dir_config(DIRS)
     self.start
   end
 
@@ -43,6 +49,11 @@ module DirMonitor
   end
 
   def self.start
+    if DIRS.empty?
+      puts "DIR empty, not start process."
+      return
+    end
+
     @pipe.close_connection if @pipe
     cmd = [FSEvent.watcher_path] + OPTS + DIRS.to_a
     puts "start monitor process: #{cmd}"
