@@ -17,11 +17,12 @@
    CLOSED: [2013-11-19 Tue 10:07]
 ** DONE fix global variables
    CLOSED: [2013-11-19 Tue 10:26]
+** DONE daemonize server
+   CLOSED: [2013-11-19 Tue 11:48]
 ** solr async
 ** search shortcut
 ** refactor
 ** commandline works
-** daemon server
 ** linux support
 ** windows support
 ** async all the processes

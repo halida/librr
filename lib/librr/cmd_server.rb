@@ -29,8 +29,12 @@ class Librr::CmdServer < EM::Connection
 
   def handle_cmd(params)
     case params['cmd']
+    when 'ping'
+      'pong'
     when 'start'
     when 'stop'
+      puts "server stopping.."
+      EM.stop
     when 'add'
       EM.next_tick{
         @@monitor.add_directory(params['dir'])

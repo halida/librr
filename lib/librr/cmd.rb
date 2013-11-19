@@ -7,14 +7,17 @@ class Librr::CMD < Thor
 
   desc 'start', 'start background process'
   def start
-    puts 'starting..'
-    # todo
+    if @@client.check_start
+      puts 'server already started..'
+    else
+      puts 'server starting..'
+    end
   end
 
   desc 'stop', 'stop background process'
   def stop
     puts 'stopping..'
-    # todo
+    @@client.cmd(:stop) rescue nil
   end
 
   desc 'add DIR', 'add directory for indexing'
