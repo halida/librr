@@ -58,6 +58,7 @@ class Indexer
   end
 
   def index_file(file)
+    return if file =~ Settings::ESCAPE_FILES
     puts "index file: #{file}"
     File.readlines(file).each_with_index do |line, num|
       @solr.add id: SecureRandom.uuid, filename: file, linenum: num, line: line
