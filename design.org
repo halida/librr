@@ -10,7 +10,17 @@
    - 用其他的  
 * todo
 ** manage solr
+   https://gist.github.com/tokland/535644
+   monitor solr process start
 ** save directory change
 ** search shortcut
 ** index method
 ** fix global variables
+* timespending
+  tomato time:
+  2013-11-14 2 design
+  2013-11-15 8 arch
+  2013-11-16 7 arch implementing
+  2013-11-17 7 prototyping
+  2013-11-19 ? working on detail
+

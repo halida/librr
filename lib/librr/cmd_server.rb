@@ -7,6 +7,11 @@ require 'rack'
 class Librr::CmdServer < EM::Connection
   include EM::HttpServer
 
+  def self.init opts
+    @@monitor = opts[:monitor]
+    @@indexer = opts[:indexer]
+  end
+
   def post_init
     super
     no_environment_strings
@@ -28,16 +33,16 @@ class Librr::CmdServer < EM::Connection
     when 'stop'
     when 'add'
       EM.next_tick{
-        $monitor.add_directory(params['dir'])
+        @@monitor.add_directory(params['dir'])
       }
     when 'remove'
       EM.next_tick{
-        $monitor.remove_directory(params['dir'])
+        @@monitor.remove_directory(params['dir'])
       }
     when 'list'
       self.dirs
     when 'search'
-      $indexer.search(params['text'])
+      @@indexer.search(params['text'])
     end
   end
 end

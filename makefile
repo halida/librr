@@ -1,3 +1,5 @@
 # run command
 run:
-	ruby -I ./lib bin/librr
+	ruby -I ./lib bin/librr search def
+server:
+	ruby -I ./lib bin/test

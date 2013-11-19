@@ -10,9 +10,13 @@ module DirMonitor
 
   OPTS = ["--file-events"]
 
+  def self.init opts
+    @@indexer = opts[:indexer]
+  end
+
   def self.add_directory(dir)
     puts "add directory: #{dir}"
-    $indexer.index_directory(dir)
+    @@indexer.index_directory(dir)
     DIRS.add(dir)
     self.start
   end
@@ -30,7 +34,7 @@ module DirMonitor
   def receive_data data
     changes = data.strip.split(':').map(&:strip).reject{|s| s == ''}
     changes.each do |file|
-      $indexer.index_file(file)
+      @@indexer.index_file(file)
     end
   end
 
