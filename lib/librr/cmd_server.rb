@@ -37,7 +37,7 @@ class Librr::CmdServer
     end
 
     def process_http_request
-      puts  @http_request_uri
+      # puts @http_request_uri
       response = EM::DelegatedHttpResponse.new(self)
       response.status = 200
       response.content_type 'application/json'
@@ -63,7 +63,7 @@ class Librr::CmdServer
           @@server.monitor.remove_directory(params['dir'])
         }
       when 'list'
-        self.dirs
+        @@server.monitor.dirs.to_a
       when 'reindex'
         @@server.monitor.reindex
       when 'search'

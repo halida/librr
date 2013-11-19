@@ -32,7 +32,7 @@ class Librr::CmdParser < Thor
 
   desc 'list', 'list all indexed directories'
   def list
-    # todo
+    puts @@client.cmd(:list)
   end
 
   desc "reindex", "reindex files"
