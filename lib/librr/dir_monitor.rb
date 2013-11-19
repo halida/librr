@@ -1,11 +1,12 @@
 require 'eventmachine'
 require 'rb-fsevent'
-
 require 'set'
 
 require 'librr/configer'
 
+
 class Librr::DirMonitor
+
   attr_accessor :indexer, :dirs
 
   def init opts
@@ -76,8 +77,10 @@ class Librr::DirMonitor
     end
 
     def unbind
-      puts "stopped monitor process.."
+      puts "dir monitor process stopped."
     end
+
   end
+
 end
 

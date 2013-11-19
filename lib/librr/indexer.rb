@@ -1,10 +1,13 @@
 require 'eventmachine'
 # require 'rsolr-async' rescue nil
 require 'rsolr'
+
+
 require 'librr/lib'
+require 'librr/settings'
+
 
 class Librr::Indexer
-  FILES = {}
 
   def start &after_block
     @after_block = after_block
@@ -18,7 +21,9 @@ class Librr::Indexer
     end
   end
 
+
   module SolrManager
+
     def post_init
       puts 'start solr'
     end
@@ -30,9 +35,12 @@ class Librr::Indexer
     def unbind
       puts "stop solr"
     end
+
   end
 
+
   class SolrOutHandler < EventMachine::Connection
+
     def initialize(indexer)
       @indexer = indexer
     end
@@ -44,11 +52,15 @@ class Librr::Indexer
         end
       end
     end
+
   end
+
 
   def after_start
     puts 'after solr start'
-    @solr = RSolr.connect(url: 'http://localhost:8901/solr', read_timeout: 120, open_timeout: 120)
+    @solr = RSolr.connect(
+                  url: "http://localhost:#{Settings::SOLR_PORT}/solr",
+                  read_timeout: 120, open_timeout: 120)
     @after_block.call if @after_block
   end
 
@@ -70,7 +82,7 @@ class Librr::Indexer
     File.readlines(file).each_with_index do |line, num|
       @solr.add id: SecureRandom.uuid, filename: file, linenum: num, line: line
     end
-    # @solr.commit
+    @solr.commit
   end
 
   def search(str)
@@ -79,4 +91,5 @@ class Librr::Indexer
       [row['filename'], row['linenum'], row['line']].flatten
     end
   end
+
 end

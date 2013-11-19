@@ -1,10 +1,11 @@
-# -*- coding: utf-8 -*-
 require 'net/http'
 require 'json'
 
 require 'librr/server_starter'
 
+
 class Librr::CmdClient
+
   def initialize host, port
     @host = host
     @port = port
@@ -30,7 +31,7 @@ class Librr::CmdClient
 
       puts "server not start, starting.."
       ServerStarter.start_server
-      sleep(3)
+      sleep(3) # todo for wait server started
 
       retried += 1
       if retried > 3

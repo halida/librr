@@ -21,11 +21,18 @@
    CLOSED: [2013-11-19 Tue 11:48]
 ** DONE list directories
    CLOSED: [2013-11-19 Tue 16:48]
-** refactor
+** DONE refactor
+   CLOSED: [2013-11-19 Tue 17:06]
    - all class under Librr
    - clear structure and proper name
    - all code are clean
 ** commandline works
+** refactor settings
+** remove directory also remove index
+** remove and modify file also remove file index
+** remove direcotries
+** evma_httpserver is ugly
+** CmdServerHandler not calling post_init
 ** installation works
 ** log
 ** spec

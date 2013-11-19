@@ -2,7 +2,9 @@ require 'thor'
 require 'librr/cmd_client'
 require 'librr/settings'
 
+
 class Librr::CmdParser < Thor
+
   desc 'start', 'start background process'
   def start
     if @@client.check_start
@@ -40,12 +42,12 @@ class Librr::CmdParser < Thor
     @@client.cmd(:reindex)
   end
 
-  desc 'search STRING', 'search emacs'
+  desc 'search STRING', 'search string'
   def search(text)
     puts "searching: #{text}"
     results = @@client.cmd(:search, text: text)
     if results.empty?
-      puts "cannot find any result"
+      puts "find no result"
     else
       puts results.map{|v| v.join(":")}
     end
@@ -55,4 +57,5 @@ class Librr::CmdParser < Thor
     @@client = Librr::CmdClient.new('localhost', Settings::RUNNER_PORT)
     self.start(ARGV)
   end
+
 end

@@ -1,3 +1,5 @@
+# copy from gem daemons file: daemonize.rb
+# todo: may has secruity risk
 require 'librr/lib'
 
 module ServerStarter
@@ -20,7 +22,9 @@ module ServerStarter
         redirect_std do
           self.run
         end
+        exit
       end
+      exit
     end
   end
 end

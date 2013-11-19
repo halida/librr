@@ -4,6 +4,7 @@ require 'evma_httpserver'
 require 'json'
 require 'rack'
 
+
 class Librr::CmdServer
   attr_accessor :monitor, :indexer
 
@@ -50,24 +51,33 @@ class Librr::CmdServer
       case params['cmd']
       when 'ping'
         'pong'
-      when 'start'
+
       when 'stop'
         puts "server stopping.."
         EM.stop
+
       when 'add'
         EM.next_tick{
           @@server.monitor.add_directory(params['dir'])
         }
+
       when 'remove'
         EM.next_tick{
           @@server.monitor.remove_directory(params['dir'])
         }
+
       when 'list'
         @@server.monitor.dirs.to_a
+
       when 'reindex'
         @@server.monitor.reindex
+
       when 'search'
         @@server.indexer.search(params['text'])
+
+      else
+        raise Exception, "cmd unknown: #{params['cmd']}"
+
       end
     end
 

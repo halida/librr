@@ -5,7 +5,9 @@ require 'librr/indexer'
 require 'librr/dir_monitor'
 require 'librr/cmd_server'
 
+
 EventMachine.kqueue = true if EventMachine.kqueue?
+
 
 class Librr::Runner
   def run!
