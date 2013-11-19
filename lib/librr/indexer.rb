@@ -1,5 +1,6 @@
 require 'eventmachine'
-require 'rsolr-async' rescue nil
+# require 'rsolr-async' rescue nil
+require 'rsolr'
 require 'librr/lib'
 
 module SolrManager
@@ -44,9 +45,9 @@ class Indexer
 
   def after_start
     puts 'after solr start'
-    @solr = RSolr.connect(:async, :url => 'http://localhost:8901/solr')
-    @solr.delete_by_query '*:*'
-    @solr.commit
+    @solr = RSolr.connect(url: 'http://localhost:8901/solr', read_timeout: 120, open_timeout: 120)
+    # @solr.delete_by_query '*:*'
+    # @solr.commit
   end
 
   def index_directory(dir)
@@ -61,7 +62,7 @@ class Indexer
     File.readlines(file).each_with_index do |line, num|
       @solr.add id: SecureRandom.uuid, filename: file, linenum: num, line: line
     end
-    @solr.commit
+    # @solr.commit
   end
 
   def search(str)

@@ -13,11 +13,16 @@
    CLOSED: [2013-11-19 Tue 09:40]
    https://gist.github.com/tokland/535644
    monitor solr process start
-** save directory change
+** DONE save directory change
+   CLOSED: [2013-11-19 Tue 10:07]
+** DONE fix global variables
+   CLOSED: [2013-11-19 Tue 10:26]
+** solr async
 ** search shortcut
-** index method
-** fix global variables
 ** refactor
+** commandline works
+** linux support
+** windows support
 * timespending
   tomato time:
   2013-11-14 2 design
