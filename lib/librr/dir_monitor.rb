@@ -17,6 +17,13 @@ module DirMonitor
     @@indexer = opts[:indexer]
   end
 
+  def self.reindex
+    @@indexer.cleanup
+    DIRS.each do |dir|
+      @@indexer.index_directory(dir)
+    end
+  end
+
   def self.add_directory(dir)
     puts "add directory: #{dir}"
     @@indexer.index_directory(dir)

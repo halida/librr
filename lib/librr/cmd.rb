@@ -34,6 +34,11 @@ class Librr::CMD < Thor
     # todo
   end
 
+  desc "reindex", "reindex files"
+  def reindex
+    @@client.cmd(:reindex)
+  end
+
   desc 'search STRING', 'search emacs'
   def search(text)
     puts "searching: #{text}"

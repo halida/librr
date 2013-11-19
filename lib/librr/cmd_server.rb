@@ -41,6 +41,8 @@ class Librr::CmdServer < EM::Connection
       }
     when 'list'
       self.dirs
+    when 'reindex'
+      @@monitor.reindex
     when 'search'
       @@indexer.search(params['text'])
     end

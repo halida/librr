@@ -21,8 +21,10 @@
 ** search shortcut
 ** refactor
 ** commandline works
+** daemon server
 ** linux support
 ** windows support
+** async all the processes
 * timespending
   tomato time:
   2013-11-14 2 design

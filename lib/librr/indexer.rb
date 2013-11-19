@@ -46,8 +46,11 @@ class Indexer
   def after_start
     puts 'after solr start'
     @solr = RSolr.connect(url: 'http://localhost:8901/solr', read_timeout: 120, open_timeout: 120)
-    # @solr.delete_by_query '*:*'
-    # @solr.commit
+  end
+
+  def cleanup
+    @solr.delete_by_query '*:*'
+    @solr.commit
   end
 
   def index_directory(dir)
