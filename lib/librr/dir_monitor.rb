@@ -5,83 +5,79 @@ require 'set'
 
 require 'librr/configer'
 
-module DirMonitor
-  DIRS = Configer.load_dir_config
-  puts "on monitor: #{DIRS.to_a.to_s}"
-  OBJS = {}
-  @@pipe = nil
+class Librr::DirMonitor
+  attr_accessor :indexer, :dirs
 
-  OPTS = ["--file-events"]
+  def init opts
+    @pipe = nil
+    @indexer = opts[:indexer]
 
-  def self.init opts
-    @@indexer = opts[:indexer]
+    self.dirs = Configer.load_dir_config
+    puts "on monitor: #{self.dirs.to_a.to_s}"
   end
 
-  def self.reindex
-    @@indexer.cleanup
-    DIRS.each do |dir|
-      @@indexer.index_directory(dir)
+  def reindex
+    @indexer.cleanup
+    self.dirs.each do |dir|
+      @indexer.index_directory(dir)
     end
   end
 
-  def self.add_directory(dir)
+  def add_directory(dir)
     puts "add directory: #{dir}"
-    @@indexer.index_directory(dir)
-    DIRS.add(dir)
-    Configer.save_dir_config(DIRS)
-    puts "save directory: #{DIRS.to_a.to_s}"
+    @indexer.index_directory(dir)
+    self.dirs.add(dir)
+    Configer.save_dir_config(self.dirs)
+    puts "save directory: #{self.dirs.to_a.to_s}"
     self.start
   end
 
-  def self.remove_directory(dir)
+  def remove_directory(dir)
     puts "remove directory: #{dir}"
-    DIRS.delete(dir)
-    Configer.save_dir_config(DIRS)
+    self.dirs.delete(dir)
+    Configer.save_dir_config(self.dirs)
     self.start
   end
 
   def post_init
-    # count up to 5
+    @after_block.call if @after_block
   end
 
-  def receive_data data
-    changes = data.strip.split(':').map(&:strip).reject{|s| s == ''}
-    changes.each do |file|
-      @@indexer.index_file(file)
-    end
-  end
+  def start &after_block
+    @after_block = after_block
 
-  def unbind
-    puts "stopped monitor process.."
-  end
-
-  def self.start
-    if DIRS.empty?
+    if self.dirs.empty?
       puts "DIR empty, not start process."
       return
     end
 
     @pipe.close_connection if @pipe
-    cmd = [FSEvent.watcher_path] + OPTS + DIRS.to_a
+    cmd = [FSEvent.watcher_path] + ["--file-events"] + self.dirs.to_a
     puts "start monitor process: #{cmd}"
-    @pipe = EM.popen(cmd, DirMonitor)
+    @pipe = EM.popen(cmd, DirWatcher, self)
+  end
+
+  class DirWatcher < EventMachine::Connection
+
+    def initialize(monitor)
+      super
+      @monitor = monitor
+    end
+
+    def post_init
+      @monitor.post_init
+    end
+
+    def receive_data data
+      changes = data.strip.split(':').map(&:strip).reject{|s| s == ''}
+      changes.each do |file|
+        @monitor.indexer.index_file(file)
+      end
+    end
+
+    def unbind
+      puts "stopped monitor process.."
+    end
   end
 end
 
-module DirWatcher
-  def file_modified
-    puts "#{path} modified"
-  end
-
-  def file_moved
-    puts "#{path} moved"
-  end
-
-  def file_deleted
-    puts "#{path} deleted"
-  end
-
-  def unbind
-    puts "#{path} monitoring ceased"
-  end
-end

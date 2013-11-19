@@ -1,5 +1,5 @@
 require 'librr'
 require 'librr/runner'
 
-Librr::Runner.new.run
+Librr::Runner.new.run!
 

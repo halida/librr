@@ -15,9 +15,10 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/halida/librr"
 
   s.files = Dir[
-    "README.md", "LICENSE", "VERSION",
-    "bin/*",
-    "lib/**/*.rb",
+            "README.md", "LICENSE", "VERSION",
+            "bin/*",
+            "lib/**/*.rb",
+            "solr/*"
   ]
   s.require_paths = ["lib"]
   s.executables = ["librr"]

@@ -2,9 +2,7 @@ require 'thor'
 require 'librr/cmd_client'
 require 'librr/settings'
 
-class Librr::CMD < Thor
-  @@client = CmdClient.new('localhost', Settings::RUNNER_PORT)
-
+class Librr::CmdParser < Thor
   desc 'start', 'start background process'
   def start
     if @@client.check_start
@@ -54,6 +52,7 @@ class Librr::CMD < Thor
   end
 
   def self.run!
+    @@client = Librr::CmdClient.new('localhost', Settings::RUNNER_PORT)
     self.start(ARGV)
   end
 end

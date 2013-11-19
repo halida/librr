@@ -4,51 +4,73 @@ require 'evma_httpserver'
 require 'json'
 require 'rack'
 
-class Librr::CmdServer < EM::Connection
-  include EM::HttpServer
+class Librr::CmdServer
+  attr_accessor :monitor, :indexer
 
-  def self.init opts
-    @@monitor = opts[:monitor]
-    @@indexer = opts[:indexer]
+  def init opts, &after_block
+    self.monitor = opts[:monitor]
+    self.indexer = opts[:indexer]
+    @after_block = after_block
+  end
+
+  def start
+    CmdServerHandler.set_server(self)
+    EventMachine.start_server "localhost", Settings::RUNNER_PORT, CmdServerHandler
   end
 
   def post_init
-    super
-    no_environment_strings
+    @after_block.call if @after_block
   end
 
-  def process_http_request
-    puts  @http_request_uri
-    response = EM::DelegatedHttpResponse.new(self)
-    response.status = 200
-    response.content_type 'application/json'
-    params = Rack::Utils.parse_nested_query(@http_post_content)
-    response.content = JSON.dump(self.handle_cmd(params))
-    response.send_response
-  end
+  class CmdServerHandler < EM::Connection
+    include EM::HttpServer
 
-  def handle_cmd(params)
-    case params['cmd']
-    when 'ping'
-      'pong'
-    when 'start'
-    when 'stop'
-      puts "server stopping.."
-      EM.stop
-    when 'add'
-      EM.next_tick{
-        @@monitor.add_directory(params['dir'])
-      }
-    when 'remove'
-      EM.next_tick{
-        @@monitor.remove_directory(params['dir'])
-      }
-    when 'list'
-      self.dirs
-    when 'reindex'
-      @@monitor.reindex
-    when 'search'
-      @@indexer.search(params['text'])
+    def self.set_server(server)
+      @@server = server
     end
+
+    def post_init
+      # todo not calling?
+      super
+      no_environment_strings
+      @@server.post_init
+    end
+
+    def process_http_request
+      puts  @http_request_uri
+      response = EM::DelegatedHttpResponse.new(self)
+      response.status = 200
+      response.content_type 'application/json'
+      params = Rack::Utils.parse_nested_query(@http_post_content)
+      response.content = JSON.dump(self.handle_cmd(params))
+      response.send_response
+    end
+
+    def handle_cmd(params)
+      case params['cmd']
+      when 'ping'
+        'pong'
+      when 'start'
+      when 'stop'
+        puts "server stopping.."
+        EM.stop
+      when 'add'
+        EM.next_tick{
+          @@server.monitor.add_directory(params['dir'])
+        }
+      when 'remove'
+        EM.next_tick{
+          @@server.monitor.remove_directory(params['dir'])
+        }
+      when 'list'
+        self.dirs
+      when 'reindex'
+        @@server.monitor.reindex
+      when 'search'
+        @@server.indexer.search(params['text'])
+      end
+    end
+
   end
+
 end

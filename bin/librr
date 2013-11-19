@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
 require 'librr'
-require 'librr/cmd'
-Librr::CMD.run!
+require 'librr/cmd_parser'
+Librr::CmdParser.run!

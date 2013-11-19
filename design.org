@@ -19,13 +19,25 @@
    CLOSED: [2013-11-19 Tue 10:26]
 ** DONE daemonize server
    CLOSED: [2013-11-19 Tue 11:48]
+** refactor
+   - all class under Librr
+   - clear structure and proper name
+   - all code are clean
+** commandline works
+** installation works
+** list directories
 ** solr async
 ** search shortcut
-** refactor
-** commandline works
 ** linux support
 ** windows support
 ** async all the processes
+** add directory with file type
+   like: librr add ./gtd *.org
+** solr distribute licence
+* bug
+** search result not fully transmit
+** solr index should aysnc
+** index big directory halt
 * timespending
   tomato time:
   2013-11-14 2 design

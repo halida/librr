@@ -8,22 +8,29 @@ require 'librr/cmd_server'
 EventMachine.kqueue = true if EventMachine.kqueue?
 
 class Librr::Runner
-  def run
-    EventMachine.run {
+  def run!
+    EventMachine.run do
       trap("SIGINT") do
         EM.stop
         puts "eventmachine graceful stops."
+        # todo commandline still show ^C?
       end
 
-      indexer = Indexer.new
-      monitor = DirMonitor
+      indexer = Librr::Indexer.new
+      monitor = Librr::DirMonitor.new
+      server  = Librr::CmdServer.new
 
-      DirMonitor.init(indexer: indexer)
-      Librr::CmdServer.init(indexer: indexer, monitor: monitor)
+      monitor.init(indexer: indexer)
+      server.init(indexer: indexer, monitor: monitor)
 
-      EventMachine.start_server "127.0.0.1", Settings::RUNNER_PORT, Librr::CmdServer
-      indexer.start
-      monitor.start
-    }
+      indexer.start do
+        monitor.start do
+          server.start do
+            puts "server started"
+          end
+        end
+      end
+
+    end
   end
 end

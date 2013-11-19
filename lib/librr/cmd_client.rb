@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 require 'net/http'
 require 'json'
 
 require 'librr/server_starter'
 
-class CmdClient
+class Librr::CmdClient
   def initialize host, port
     @host = host
     @port = port
