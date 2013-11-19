@@ -10,6 +10,11 @@ EventMachine.kqueue = true if EventMachine.kqueue?
 class Librr::Runner
   def run
     EventMachine.run {
+      trap("SIGINT") do
+        EM.stop
+        puts "eventmachine graceful stops."
+      end
+
       indexer = Indexer.new
       monitor = DirMonitor
 
