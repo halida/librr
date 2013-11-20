@@ -1,4 +1,4 @@
-require File.expand_path('../lib/mail_catcher/version', __FILE__)
+require File.expand_path('../lib/librr/version', __FILE__)
 
 Gem::Specification.new do |s|
   s.name = "librr"
@@ -30,7 +30,9 @@ Gem::Specification.new do |s|
   s.add_dependency "eventmachine"
   s.add_dependency "eventmachine_httpserver"
   s.add_dependency "rsolr-async"
+  s.add_dependency "yaml"
 
   s.add_development_dependency "rake"
   s.add_development_dependency "sass"
+  s.add_development_dependency "rspec"
 end

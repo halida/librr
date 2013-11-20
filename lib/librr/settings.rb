@@ -1,6 +1,36 @@
+require 'yaml'
+
 class Settings
-  RUNNER_PORT = 4512
   CONFIG_PATH = File.expand_path('~/.librr/')
-  ESCAPE_FILES = /[#~]$/
-  SOLR_PORT = 8901
+  CONFIG_FILE = File.join(CONFIG_PATH, 'config')
+
+  DEFAULTS = {
+    runner_port: 4512,
+    config_path: CONFIG_PATH,
+    escape_files: /[#~]$/,
+    solr_port: 8901,
+  }
+
+  def self.reload
+    if File.exists?(CONFIG_FILE)
+      begin
+        @@config = YAML.load File.read(CONFIG_FILE)
+        raise unless @@config.kind_of?(Hash)
+      rescue
+        raise "config file format error: #{CONFIG_FILE}"
+      end
+    else
+      @@config = DEFAULTS.dup
+    end
+  end
+
+  def self.method_missing(name)
+    self.reload unless defined?(@@config)
+
+    if @@config.include?(name)
+      @@config[name]
+    else
+      super
+    end
+  end
 end

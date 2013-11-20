@@ -10,3 +10,13 @@ task "package:gem" do
   Gem::Package.build spec
 end
 
+begin
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new(:spec) do |spec|
+    spec.pattern = 'spec/**/*_spec.rb'
+    spec.rspec_opts = ['--color']
+  end
+  task default: :spec
+rescue LoadError
+  nil
+end
