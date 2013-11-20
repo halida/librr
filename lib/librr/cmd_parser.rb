@@ -5,9 +5,10 @@ require 'librr/settings'
 
 class Librr::CmdParser < Thor
 
-  desc 'start', 'start background process'
+  option :sync, type: :boolean
+  desc 'start [--sync]', 'start background process'
   def start
-    if @@client.check_start
+    if @@client.check_start(options[:sync])
       puts 'server already started..'
     else
       puts 'server starting..'

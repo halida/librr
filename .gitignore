@@ -11,3 +11,4 @@ tags
 
 solr/solr/data
 Gemfile.lock
+*.gem

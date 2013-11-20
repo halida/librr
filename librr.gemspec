@@ -30,7 +30,6 @@ Gem::Specification.new do |s|
   s.add_dependency "eventmachine"
   s.add_dependency "eventmachine_httpserver"
   s.add_dependency "rsolr-async"
-  s.add_dependency "yaml"
 
   s.add_development_dependency "rake"
   s.add_development_dependency "sass"

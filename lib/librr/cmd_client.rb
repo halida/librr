@@ -12,12 +12,12 @@ class Librr::CmdClient
     @server = nil
   end
 
-  def check_start
+  def check_start(sync)
     begin
-      self.cmd(:ping)
+      self.run_cmd(:ping)
       return true
     rescue Errno::ECONNREFUSED => e
-      ServerStarter.start_server
+      ServerStarter.start_server(sync)
       return
     end
   end
@@ -30,7 +30,7 @@ class Librr::CmdClient
     rescue Errno::ECONNREFUSED => e
 
       puts "server not start, starting.."
-      ServerStarter.start_server
+      ServerStarter.start_server(false)
       sleep(3) # todo for wait server started
 
       retried += 1

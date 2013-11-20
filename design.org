@@ -37,6 +37,7 @@
 ** evma_httpserver is ugly
 ** CmdServerHandler not calling post_init
 ** installation works
+** doc on settings
 ** log
 ** solr async
 ** search shortcut

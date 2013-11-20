@@ -12,10 +12,12 @@ module ServerStarter
 
     # Daemons.daemonize
     puts "daemon start"
-    Librr::Runner.new.run
+    Librr::Runner.new.run!
   end
 
-  def start_server
+  def start_server(sync)
+    return self.run if sync
+
     Process.fork do
       sess_id = Process.setsid
       Process.fork do
