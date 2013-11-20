@@ -3,6 +3,7 @@ require 'yaml'
 class Settings
   CONFIG_PATH = File.expand_path('~/.librr/')
   CONFIG_FILE = File.join(CONFIG_PATH, 'config')
+  PID_FILE = File.join(CONFIG_PATH, 'server.pid')
 
   DEFAULTS = {
     runner_port: 4512,

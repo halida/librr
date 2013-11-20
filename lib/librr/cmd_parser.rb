@@ -10,8 +10,6 @@ class Librr::CmdParser < Thor
   def start
     if @@client.check_start(options[:sync])
       puts 'server already started..'
-    else
-      puts 'server starting..'
     end
   end
 

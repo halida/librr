@@ -8,33 +8,23 @@ require 'rack'
 class Librr::CmdServer
   attr_accessor :monitor, :indexer
 
-  def init opts, &after_block
+  def init opts
     self.monitor = opts[:monitor]
     self.indexer = opts[:indexer]
-    @after_block = after_block
-  end
-
-  def start
     CmdServerHandler.set_server(self)
-    EventMachine.start_server "localhost", Settings.runner_port, CmdServerHandler
   end
 
-  def post_init
-    @after_block.call if @after_block
+  def start(&block)
+    EventMachine.start_server "localhost", Settings.runner_port, CmdServerHandler
+    EM.add_timer(1){ block.call if block }
   end
+
 
   class CmdServerHandler < EM::Connection
     include EM::HttpServer
 
     def self.set_server(server)
       @@server = server
-    end
-
-    def post_init
-      # todo not calling?
-      super
-      no_environment_strings
-      @@server.post_init
     end
 
     def process_http_request

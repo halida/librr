@@ -23,23 +23,23 @@ class Librr::CmdClient
   end
 
   def cmd cmd, **params
-    retried = 0
-
     begin
       self.run_cmd cmd, **params
     rescue Errno::ECONNREFUSED => e
 
       puts "server not start, starting.."
       ServerStarter.start_server(false)
-      sleep(3) # todo for wait server started
 
-      retried += 1
-      if retried > 3
-        puts "server not starting, something is wrong."
-        exit
+      5.times.each do
+        sleep(2)
+        puts 'waiting server starting..'
+
+        if File.exists?(Settings::PID_FILE)
+          return self.run_cmd cmd, **params
+        end
       end
-
-      retry
+      puts "server not starting, something is wrong."
+      exit
     end
   end
 

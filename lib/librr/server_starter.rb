@@ -16,6 +16,7 @@ module ServerStarter
   end
 
   def start_server(sync)
+    puts 'server starting..'
     return self.run if sync
 
     Process.fork do

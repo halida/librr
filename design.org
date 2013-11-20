@@ -30,12 +30,16 @@
    CLOSED: [2013-11-20 Wed 18:56]
 ** DONE refactor settings
    CLOSED: [2013-11-20 Wed 18:56]
-** commandline works
+** DONE commandline works
+   CLOSED: [2013-11-20 Wed 21:03]
+** DONE auto start server works
+   CLOSED: [2013-11-20 Wed 21:03]
 ** remove directory also remove index
 ** remove and modify file also remove file index
 ** remove direcotries
 ** evma_httpserver is ugly
-** CmdServerHandler not calling post_init
+** DONE CmdServerHandler not calling post_init
+   CLOSED: [2013-11-20 Wed 21:03]
 ** installation works
 ** doc on settings
 ** log
