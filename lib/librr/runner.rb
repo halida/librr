@@ -12,9 +12,13 @@ EventMachine.kqueue = true if EventMachine.kqueue?
 class Librr::Runner
   def run!
     self.clear_pid
+    @stoping = false
 
     EventMachine.run do
       trap("SIGINT") do
+        return if @stoping
+        @stoping = true
+
         EM.stop
         puts "eventmachine graceful stops."
         # todo commandline still show ^C?
