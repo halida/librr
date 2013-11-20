@@ -54,7 +54,7 @@ class Librr::CmdParser < Thor
   end
 
   def self.run!
-    @@client = Librr::CmdClient.new('localhost', Settings::RUNNER_PORT)
+    @@client = Librr::CmdClient.new('localhost', Settings.runner_port)
     self.start(ARGV)
   end
 

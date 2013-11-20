@@ -59,7 +59,7 @@ class Librr::Indexer
   def after_start
     puts 'after solr start'
     @solr = RSolr.connect(
-                  url: "http://localhost:#{Settings::SOLR_PORT}/solr",
+                  url: "http://localhost:#{Settings.solr_port}/solr",
                   read_timeout: 120, open_timeout: 120)
     @after_block.call if @after_block
   end
@@ -77,7 +77,7 @@ class Librr::Indexer
   end
 
   def index_file(file)
-    return if file =~ Settings::ESCAPE_FILES
+    return if file =~ Settings.escape_files
     puts "index file: #{file}"
     File.readlines(file).each_with_index do |line, num|
       @solr.add id: SecureRandom.uuid, filename: file, linenum: num, line: line

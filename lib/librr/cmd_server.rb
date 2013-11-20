@@ -16,7 +16,7 @@ class Librr::CmdServer
 
   def start
     CmdServerHandler.set_server(self)
-    EventMachine.start_server "localhost", Settings::RUNNER_PORT, CmdServerHandler
+    EventMachine.start_server "localhost", Settings.runner_port, CmdServerHandler
   end
 
   def post_init

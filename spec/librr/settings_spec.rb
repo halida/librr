@@ -7,8 +7,12 @@ describe Settings do
     FileUtils.mkpath(Settings::CONFIG_PATH)
   end
 
+  after do
+    File.delete(Settings::CONFIG_FILE) rescue nil
+  end
+
   it 'default config' do
-    File.delete(Settings::CONFIG_FILE)
+    File.delete(Settings::CONFIG_FILE) rescue nil
     Settings.runner_port.should == 4512
   end
 
