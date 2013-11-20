@@ -26,8 +26,10 @@
    - all class under Librr
    - clear structure and proper name
    - all code are clean
-** spec
-** refactor settings
+** DONE spec
+   CLOSED: [2013-11-20 Wed 18:56]
+** DONE refactor settings
+   CLOSED: [2013-11-20 Wed 18:56]
 ** commandline works
 ** remove directory also remove index
 ** remove and modify file also remove file index
