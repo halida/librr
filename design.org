@@ -34,23 +34,43 @@
    CLOSED: [2013-11-20 Wed 21:03]
 ** DONE auto start server works
    CLOSED: [2013-11-20 Wed 21:03]
+** log
+   - use log system replace puts
+   - processes output log to log file
+   - config server start with log level:
+     librr start --sync --log-level info
 ** solr async
+   gem rsolr-async is not uptodate, may I support it?
+   - understand rsolr
+   - understand rsolr-async
+   - understand eventmachine
+   - try to upgrade rsolr-async
 ** remove directory also remove index
 ** remove and modify file also remove file index
 ** remove direcotries
-** evma_httpserver is ugly
 ** DONE CmdServerHandler not calling post_init
    CLOSED: [2013-11-20 Wed 21:03]
-** installation works
+** DONE installation works
+** async all the processes
 ** doc on settings
-** log
 ** search shortcut
+** processes fail management
+   if runner process failed, all other processes should not effect new runner.
 ** linux support
 ** windows support
-** async all the processes
 ** add directory with file type
    like: librr add ./gtd *.org
 ** solr distribute licence
+** evma_httpserver is ugly
+* version
+** TODO 0.1
+   can be used under my working evironment
+   - [[remove directory also remove index]]
+   - [[remove and modify file also remove file index]]
+   - [[remove direcotries]]
+   - [[async all the processes]]
+   - write specs
+   - use for a while, fix bugs
 * bug
 ** DONE search result not fully transmit
    CLOSED: [2013-11-25 Mon 09:03]
