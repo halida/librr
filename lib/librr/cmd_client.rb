@@ -32,7 +32,7 @@ class Librr::CmdClient
 
       5.times.each do
         sleep(2)
-        puts 'waiting server starting..'
+        puts 'waiting for server starting..'
 
         if File.exists?(Settings::PID_FILE)
           return self.run_cmd cmd, **params

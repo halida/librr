@@ -20,7 +20,7 @@ module ServerStarter
       sess_id = Process.setsid
       Process.fork do
         redirect_std do
-          puts "daemon start"
+          $logger.info "daemon started."
           self.run
         end
         exit

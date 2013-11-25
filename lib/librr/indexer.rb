@@ -25,15 +25,15 @@ class Librr::Indexer
   module SolrManager
 
     def post_init
-      puts 'start solr'
+      $logger.info 'start solr'
     end
 
     def receive_data data
-      puts "receiving solr: #{data}"
+      $logger.info "receiving solr: #{data}"
     end
 
     def unbind
-      puts "stop solr"
+      $logger.info "stop solr"
     end
 
   end
@@ -57,7 +57,7 @@ class Librr::Indexer
 
 
   def after_start
-    puts 'after solr start'
+    $logger.info 'after solr start'
     @solr = RSolr.connect(
                   url: "http://localhost:#{Settings.solr_port}/solr",
                   read_timeout: 120, open_timeout: 120)
@@ -83,7 +83,7 @@ class Librr::Indexer
 
   def index_file(file)
     return if file =~ Settings.escape_files
-    puts "index file: #{file}"
+    $logger.info "index file: #{file}"
     File.readlines(file).map(&:rstrip).each_with_index do |line, num|
       @solr.add id: SecureRandom.uuid, filename: file, linenum: num, line: line
     end

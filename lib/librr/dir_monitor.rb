@@ -2,6 +2,7 @@ require 'eventmachine'
 require 'rb-fsevent'
 require 'set'
 
+require 'librr/logger'
 require 'librr/configer'
 
 
@@ -14,7 +15,7 @@ class Librr::DirMonitor
     @indexer = opts[:indexer]
 
     self.dirs = Configer.load_dir_config
-    puts "on monitor: #{self.dirs.to_a.to_s}"
+    $logger.info "on monitor: #{self.dirs.to_a.to_s}"
   end
 
   def reindex
@@ -25,16 +26,16 @@ class Librr::DirMonitor
   end
 
   def add_directory(dir)
-    puts "add directory: #{dir}"
+    $logger.info "add directory: #{dir}"
     @indexer.index_directory(dir)
     self.dirs.add(dir)
     Configer.save_dir_config(self.dirs)
-    puts "save directory: #{self.dirs.to_a.to_s}"
+    $logger.info "save directory: #{self.dirs.to_a.to_s}"
     self.start
   end
 
   def remove_directory(dir)
-    puts "remove directory: #{dir}"
+    $logger.info "remove directory: #{dir}"
     @indexer.remove_index_directory(dir)
     self.dirs.delete(dir)
     Configer.save_dir_config(self.dirs)
@@ -49,13 +50,13 @@ class Librr::DirMonitor
     @after_block = after_block
 
     if self.dirs.empty?
-      puts "DIR empty, not start process."
+      $logger.info "DIR empty, not start process."
       return
     end
 
     @pipe.close_connection if @pipe
     cmd = [FSEvent.watcher_path] + ["--file-events"] + self.dirs.to_a
-    puts "start monitor process: #{cmd}"
+    $logger.info "start monitor process: #{cmd}"
     @pipe = EM.popen(cmd, DirWatcher, self)
   end
 
@@ -78,7 +79,7 @@ class Librr::DirMonitor
     end
 
     def unbind
-      puts "dir monitor process stopped."
+      $logger.info "dir monitor process stopped."
     end
 
   end
