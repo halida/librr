@@ -6,12 +6,9 @@ module ServerStarter
   extend self
 
   def run
-    require 'daemons'
     require 'librr'
     require 'librr/runner'
 
-    # Daemons.daemonize
-    puts "daemon start"
     Librr::Runner.new.run!
   end
 
@@ -23,6 +20,7 @@ module ServerStarter
       sess_id = Process.setsid
       Process.fork do
         redirect_std do
+          puts "daemon start"
           self.run
         end
         exit
