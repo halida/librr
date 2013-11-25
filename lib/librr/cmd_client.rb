@@ -1,6 +1,7 @@
 require 'net/http'
 require 'json'
 
+require 'librr/logger'
 require 'librr/server_starter'
 
 
@@ -46,6 +47,7 @@ class Librr::CmdClient
   def run_cmd cmd, **params
     params[:cmd] = cmd
     url = '/cmd'
+    $logger.debug(:CmdClient){ "sending: #{params}" }
     result = Net::HTTP.post_form(URI.parse("http://#{@host}:#{@port}#{url}"), params)
     JSON.load(result.body)
   end

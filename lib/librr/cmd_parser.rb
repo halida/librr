@@ -28,7 +28,7 @@ class Librr::CmdParser < Thor
   desc 'remove DIR', 'remove directory from indexing'
   def remove(dir)
     puts "removing: #{dir}"
-    # todo
+    @@client.cmd(:remove, dir: File.expand_path(dir))
   end
 
   desc 'list', 'list all indexed directories'
