@@ -47,7 +47,6 @@
    - try to upgrade rsolr-async
 ** remove directory also remove index
 ** remove and modify file also remove file index
-** remove direcotries
 ** DONE CmdServerHandler not calling post_init
    CLOSED: [2013-11-20 Wed 21:03]
 ** DONE installation works
@@ -61,7 +60,7 @@
 ** add directory with file type
    like: librr add ./gtd *.org
 ** solr distribute licence
-** evma_httpserver is ugly
+** evma_httpserver looks ugly
 * version
 ** TODO 0.1
    can be used under my working evironment
@@ -94,3 +93,5 @@
   2013-11-17 7 prototyping
   2013-11-19 10 working on detail
   2013-11-20 7 working on detail
+  2013-11-21 1 fixing bug
+
