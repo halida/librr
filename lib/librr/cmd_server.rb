@@ -38,6 +38,7 @@ class Librr::CmdServer
     end
 
     def handle_cmd(params)
+      $logger.info(:CmdServer){ "on receive: #{params.to_s}"}
       case params['cmd']
       when 'ping'
         'pong'

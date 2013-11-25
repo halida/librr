@@ -25,15 +25,15 @@ class Librr::Indexer
   module SolrManager
 
     def post_init
-      $logger.info 'start solr'
+      $logger.info(:SolrManager){ 'start solr' }
     end
 
     def receive_data data
-      $logger.info "receiving solr: #{data}"
+      $logger.info(:SolrManager){ "receiving solr: #{data}" }
     end
 
     def unbind
-      $logger.info "stop solr"
+      $logger.info(:SolrManager){ "stop solr" }
     end
 
   end
@@ -57,7 +57,7 @@ class Librr::Indexer
 
 
   def after_start
-    $logger.info 'after solr start'
+    $logger.info(:Indexer){ 'after solr start' }
     @solr = RSolr.connect(
                   url: "http://localhost:#{Settings.solr_port}/solr",
                   read_timeout: 120, open_timeout: 120)
@@ -65,11 +65,13 @@ class Librr::Indexer
   end
 
   def cleanup
+    $logger.info(:Indexer){ 'cleanup' }
     @solr.delete_by_query '*:*'
     @solr.commit
   end
 
   def index_directory(dir)
+    $logger.info(:Indexer){ "index dir: #{dir}" }
     Dir.glob(File.join(dir, "**/*")).each do |file|
       next unless File.file?(file)
       self.index_file(file)
@@ -77,13 +79,15 @@ class Librr::Indexer
   end
 
   def remove_index_directory(dir)
+    $logger.info(:Indexer){ "remove dir: #{dir}" }
     @solr.delete_by_query "filename:#{dir}*"
     @solr.commit
   end
 
   def index_file(file)
     return if file =~ Settings.escape_files
-    $logger.info "index file: #{file}"
+    $logger.info(:Indexer){ "index file: #{file}" }
+
     File.readlines(file).map(&:rstrip).each_with_index do |line, num|
       @solr.add id: SecureRandom.uuid, filename: file, linenum: num, line: line
     end
@@ -91,6 +95,7 @@ class Librr::Indexer
   end
 
   def search(str)
+    $logger.info(:Indexer){ "search: #{str}" }
     result = @solr.get 'select', params: {q: "line:#{str}"}
     result['response']['docs'].map do |row|
       [row['filename'], row['linenum'], row['line']].flatten
