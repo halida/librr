@@ -85,6 +85,7 @@ class Librr::Indexer
   end
 
   def index_file(file)
+    return unless File.exists?(file)
     return if file =~ Settings.escape_files
     $logger.info(:Indexer){ "index file: #{file}" }
 

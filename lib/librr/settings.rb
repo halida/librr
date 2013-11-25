@@ -8,7 +8,7 @@ class Settings
   DEFAULTS = {
     runner_port: 4512,
     config_path: CONFIG_PATH,
-    escape_files: /[#~]$/,
+    escape_files: /[#~]$|^\./,
     solr_port: 8901,
   }
 
