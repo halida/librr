@@ -34,6 +34,7 @@
    CLOSED: [2013-11-20 Wed 21:03]
 ** DONE auto start server works
    CLOSED: [2013-11-20 Wed 21:03]
+** solr async
 ** remove directory also remove index
 ** remove and modify file also remove file index
 ** remove direcotries
@@ -43,7 +44,6 @@
 ** installation works
 ** doc on settings
 ** log
-** solr async
 ** search shortcut
 ** linux support
 ** windows support
@@ -52,9 +52,20 @@
    like: librr add ./gtd *.org
 ** solr distribute licence
 * bug
-** search result not fully transmit
+** DONE search result not fully transmit
+   CLOSED: [2013-11-25 Mon 09:03]
+   UTF8 content-length encode error.
+   solution:
+   - use a valid web server, check the right header
+     find current content-length is based on byte(not utf8 word)
+   - think about the difference, and fix it 
+     found it is a bug: https://github.com/eventmachine/evma_httpserver/pull/12
+     but the gem is not uptodate with github master version,
+     so I create a gem: evma_httpserver_update
+     it fix the bug.
 ** solr index should aysnc
 ** index big directory halt
+** server cpu high
 * timespending
   tomato time:
   2013-11-14 2 design
@@ -62,4 +73,4 @@
   2013-11-16 7 arch implementing
   2013-11-17 7 prototyping
   2013-11-19 10 working on detail
-
+  2013-11-20 7 working on detail

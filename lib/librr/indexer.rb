@@ -79,7 +79,7 @@ class Librr::Indexer
   def index_file(file)
     return if file =~ Settings.escape_files
     puts "index file: #{file}"
-    File.readlines(file).each_with_index do |line, num|
+    File.readlines(file).map(&:rstrip).each_with_index do |line, num|
       @solr.add id: SecureRandom.uuid, filename: file, linenum: num, line: line
     end
     @solr.commit
