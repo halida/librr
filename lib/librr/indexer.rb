@@ -72,9 +72,10 @@ class Librr::Indexer
 
   def index_directory(dir)
     $logger.info(:Indexer){ "index dir: #{dir}" }
-    Dir.glob(File.join(dir, "**/*")).each do |file|
-      next unless File.file?(file)
-      self.index_file(file)
+    files = Dir.glob(File.join(dir, "**/*"))
+    EM::Iterator.new(files).each do |file, iter|
+      self.index_file(file) if File.file?(file)
+      iter.next
     end
   end
 
