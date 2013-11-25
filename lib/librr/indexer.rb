@@ -85,12 +85,17 @@ class Librr::Indexer
   end
 
   def index_file(file)
-    return unless File.exists?(file)
     return if file =~ Settings.escape_files
-    $logger.info(:Indexer){ "index file: #{file}" }
 
-    File.readlines(file).map(&:rstrip).each_with_index do |line, num|
-      @solr.add id: SecureRandom.uuid, filename: file, linenum: num, line: line
+    if File.exists?(file)
+      $logger.info(:Indexer){ "index file: #{file}" }
+      @solr.delete_by_query "filename:#{file}"
+      File.readlines(file).map(&:rstrip).each_with_index do |line, num|
+        @solr.add id: SecureRandom.uuid, filename: file, linenum: num, line: line
+      end
+    else
+      $logger.info(:Indexer){ "remove index file: #{file}" }
+      @solr.delete_by_query "filename:#{file}"
     end
     @solr.commit
   end
