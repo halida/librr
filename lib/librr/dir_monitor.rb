@@ -12,6 +12,7 @@ class Librr::DirMonitor
 
   def init opts
     @pipe = nil
+    @new_start = false
     @indexer = opts[:indexer]
 
     self.dirs = Configer.load_dir_config
@@ -51,6 +52,11 @@ class Librr::DirMonitor
     @after_block.call if @after_block
   end
 
+  def after_process_stop
+    self.start_process if @new_start
+    @new_start = false
+  end
+
   def start &after_block
     @after_block = after_block
 
@@ -59,7 +65,15 @@ class Librr::DirMonitor
       return
     end
 
-    @pipe.close_connection if @pipe
+    if @pipe
+      @new_start = true
+      @pipe.close_connection
+    else
+      self.start_process
+    end
+  end
+
+  def start_process
     cmd = [FSEvent.watcher_path] + ["--file-events"] + self.dirs.to_a
     self.info "start process: #{cmd}"
     @pipe = EM.popen(cmd, DirWatcher, self)
@@ -86,6 +100,7 @@ class Librr::DirMonitor
 
     def unbind
       $logger.info(:DirWatcher){ "dir monitor process stopped." }
+      @monitor.after_process_stop
     end
 
   end
