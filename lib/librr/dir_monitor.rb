@@ -35,6 +35,7 @@ class Librr::DirMonitor
 
   def remove_directory(dir)
     puts "remove directory: #{dir}"
+    @indexer.remove_index_directory(dir)
     self.dirs.delete(dir)
     Configer.save_dir_config(self.dirs)
     self.start

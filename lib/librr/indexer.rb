@@ -76,6 +76,11 @@ class Librr::Indexer
     end
   end
 
+  def remove_index_directory(dir)
+    @solr.delete_by_query "filename:#{dir}*"
+    @solr.commit
+  end
+
   def index_file(file)
     return if file =~ Settings.escape_files
     puts "index file: #{file}"
