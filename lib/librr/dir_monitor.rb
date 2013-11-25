@@ -62,6 +62,7 @@ class Librr::DirMonitor
 
     if self.dirs.empty?
       self.info "DIR empty, not start process."
+      self.post_init
       return
     end
 
