@@ -22,6 +22,7 @@ class Librr::CmdServer
 
   class CmdServerHandler < EM::Connection
     include EM::HttpServer
+    include Librr::Logger::ClassLogger
 
     def self.set_server(server)
       @@server = server
@@ -38,7 +39,7 @@ class Librr::CmdServer
     end
 
     def handle_cmd(params)
-      $logger.info(:CmdServer){ "on receive: #{params.to_s}"}
+      self.info "on receive: #{params.to_s}"
       case params['cmd']
       when 'ping'
         'pong'

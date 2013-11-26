@@ -8,6 +8,7 @@ require 'librr/settings'
 
 
 class Librr::Indexer
+  include Librr::Logger::ClassLogger
 
   attr_accessor :solr_started
 
@@ -30,22 +31,19 @@ class Librr::Indexer
     end
   end
 
-  def info text
-    $logger.info(:Indexer){ text }
-  end
-
   module SolrManager
+    include Librr::Logger::ClassLogger
 
     def post_init
-      $logger.info(:SolrManager){ 'start solr' }
+      self.info "start solr"
     end
 
     def receive_data data
-      $logger.info(:SolrManager){ "receiving solr: #{data}" }
+      self.info "receiving solr: #{data}"
     end
 
     def unbind
-      $logger.info(:SolrManager){ "stop solr" }
+      self.info "stop solr"
       File.delete Librr::Indexer.pid_file rescue nil
     end
 

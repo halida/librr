@@ -7,6 +7,7 @@ require 'librr/configer'
 
 
 class Librr::DirMonitor
+  include Librr::Logger::ClassLogger
 
   attr_accessor :indexer, :dirs
 
@@ -16,11 +17,7 @@ class Librr::DirMonitor
     @indexer = opts[:indexer]
 
     self.dirs = Configer.load_dir_config
-    $logger.info(:DirMonitor){ "init dirs: #{self.dirs.to_a.to_s}" }
-  end
-
-  def info(text)
-    $logger.info(:DirMonitor){ text }
+    self.info "init dirs: #{self.dirs.to_a.to_s}"
   end
 
   def reindex
@@ -88,6 +85,7 @@ class Librr::DirMonitor
   end
 
   class DirWatcher < EventMachine::Connection
+    include Librr::Logger::ClassLogger
 
     def initialize(monitor)
       super
@@ -99,7 +97,7 @@ class Librr::DirMonitor
     end
 
     def receive_data data
-      $logger.info(:DirWatcher){ "on receive data: #{data}" }
+      self.info "on receive data: #{data}"
       changes = data.strip.split(':').map(&:strip).reject{|s| s == ''}
       changes.each do |file|
         @monitor.indexer.index_file(file)
@@ -107,7 +105,7 @@ class Librr::DirMonitor
     end
 
     def unbind
-      $logger.info(:DirWatcher){ "dir monitor process stopped." }
+      self.info "dir monitor process stopped."
       @monitor.after_process_stop
       File.delete Librr::DirMonitor.pid_file rescue nil
     end
