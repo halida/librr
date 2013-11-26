@@ -19,3 +19,11 @@ def redirect_std
   [wi, ro, re]
 end
 
+
+def fix_encoding text
+  # solution copy from:
+  # http://stackoverflow.com/questions/11375342/stringencode-not-fixing-invalid-byte-sequence-in-utf-8-error
+  text
+    .encode('UTF-16', undef: :replace, invalid: :replace, replace: "")
+    .encode('UTF-8')
+end
