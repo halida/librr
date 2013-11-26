@@ -101,11 +101,11 @@ class Librr::Indexer
     if File.exists?(file)
       self.info "index file: #{file}"
       @solr.delete_by_query "filename:#{file}"
-      File.readlines(file)
-        .map{ |line| fix_encoding(line) }
-        .map(&:rstrip).each_with_index do |line, num|
-        @solr.add id: SecureRandom.uuid, filename: file, linenum: num, line: line
+      data = File.readlines(file).map do |line, num|
+        line = fix_encoding(line).rstrip
+        {id: SecureRandom.uuid, filename: file, linenum: num, line: line}
       end
+      @solr.add data
     else
       self.info "remove index file: #{file}"
       @solr.delete_by_query "filename:#{file}"
