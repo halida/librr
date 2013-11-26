@@ -102,12 +102,12 @@ class Librr::Indexer
   end
 
   def index_file(file)
-    return if file =~ Settings.escape_files
+    return if File.basename(file) =~ Settings.escape_files
 
     if File.exists?(file)
       self.info "index file: #{file}"
       @solr.delete_by_query "filename:#{file}"
-      data = File.readlines(file).map do |line, num|
+      data = File.readlines(file).each_with_index.map do |line, num|
         line = fix_encoding(line).rstrip
         {id: SecureRandom.uuid, filename: file, linenum: num, line: line}
       end
