@@ -74,10 +74,17 @@ class Librr::DirMonitor
     end
   end
 
+  def self.pid_file
+    File.join(Settings::CONFIG_PATH, 'dir_watcher.pid')
+  end
+
   def start_process
+    kill_process_by_file(self.class.pid_file)
+
     cmd = [FSEvent.watcher_path] + ["--file-events"] + self.dirs.to_a
     self.info "start process: #{cmd}"
     @pipe = EM.popen(cmd, DirWatcher, self)
+    # TODO: write pid file
   end
 
   class DirWatcher < EventMachine::Connection
@@ -102,6 +109,7 @@ class Librr::DirMonitor
     def unbind
       $logger.info(:DirWatcher){ "dir monitor process stopped." }
       @monitor.after_process_stop
+      File.delete Librr::DirMonitor.pid_file rescue nil
     end
 
   end

@@ -11,13 +11,20 @@ class Librr::Indexer
 
   attr_accessor :solr_started
 
+  def self.pid_file
+    File.join(Settings::CONFIG_PATH, 'solr.pid')
+  end
+
   def start &after_block
     @after_block = after_block
+
+    kill_process_by_file(self.class.pid_file)
 
     Dir.chdir File.join(Dir.pwd, 'solr') do
       solr = 'java -jar start.jar'
       solr_in, solr_out, solr_err = redirect_std do
         EM.popen(solr, SolrManager)
+        # TODO: write pid file
       end
       EM.attach(solr_err, SolrOutHandler, self)
     end
@@ -39,6 +46,7 @@ class Librr::Indexer
 
     def unbind
       $logger.info(:SolrManager){ "stop solr" }
+      File.delete Librr::Indexer.pid_file rescue nil
     end
 
   end

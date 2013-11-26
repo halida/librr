@@ -27,3 +27,12 @@ def fix_encoding text
     .encode('UTF-16', undef: :replace, invalid: :replace, replace: "")
     .encode('UTF-8')
 end
+
+def kill_process_by_file file
+  begin
+    pid = File.read(file).to_i
+    Process.kill 'TERM', pid if pid > 0
+    File.delete file
+  rescue
+  end
+end
