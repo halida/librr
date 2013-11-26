@@ -28,4 +28,17 @@ module ServerStarter
       exit
     end
   end
+
+  def wait_for_server_started &block
+    5.times.each do
+      sleep(2)
+      puts 'waiting for server starting..'
+
+      if File.exists?(Settings::PID_FILE)
+        return block.call if block
+      end
+    end
+    puts "server not starting, something is wrong."
+    exit
+  end
 end

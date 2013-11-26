@@ -2,6 +2,7 @@ require 'spec_helper'
 
 require 'librr/settings'
 
+
 describe Settings do
   before do
     FileUtils.mkpath(Settings::CONFIG_PATH)

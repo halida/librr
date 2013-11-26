@@ -10,41 +10,31 @@ class Librr::CmdClient
   def initialize host, port
     @host = host
     @port = port
-    @server = nil
   end
 
-  def check_start(sync)
+  def check_start(sync=false)
     begin
       self.run_cmd(:ping)
       return true
     rescue Errno::ECONNREFUSED => e
       ServerStarter.start_server(sync)
-      return
+      return false
     end
   end
 
-  def cmd cmd, **params
+  def cmd cmd, params={}
     begin
-      self.run_cmd cmd, **params
+      self.run_cmd cmd, params
     rescue Errno::ECONNREFUSED => e
-
       puts "server not start, starting.."
       ServerStarter.start_server(false)
-
-      5.times.each do
-        sleep(2)
-        puts 'waiting for server starting..'
-
-        if File.exists?(Settings::PID_FILE)
-          return self.run_cmd cmd, **params
-        end
+      ServerStarter.wait_for_server_started do
+        self.run_cmd cmd, **params
       end
-      puts "server not starting, something is wrong."
-      exit
     end
   end
 
-  def run_cmd cmd, **params
+  def run_cmd cmd, params={}
     params[:cmd] = cmd
     url = '/cmd'
     $logger.debug(:CmdClient){ "sending: #{params}" }
