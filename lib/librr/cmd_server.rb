@@ -64,7 +64,7 @@ class Librr::CmdServer
         @@server.monitor.reindex
 
       when 'search'
-        @@server.indexer.search(params['text'])
+        @@server.indexer.search(params['text'], rows: params['rows'], all: params['all'])
 
       else
         raise Exception, "cmd unknown: #{params['cmd']}"

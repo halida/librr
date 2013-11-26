@@ -41,10 +41,12 @@ class Librr::CmdParser < Thor
     @@client.cmd(:reindex)
   end
 
+  option :rows, type: :numeric, default: 20
+  option :all, type: :boolean
   desc 'search STRING', 'search string'
   def search(text)
     puts "searching: #{text}"
-    results = @@client.cmd(:search, text: text)
+    results = @@client.cmd(:search, text: text, all: options[:all], rows: options[:rows])
     if results.empty?
       puts "find no result"
     else

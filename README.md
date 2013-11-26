@@ -59,6 +59,8 @@ librr search emacs
 librr s emacs
 ```
 
+TODO rows
+
 Schecdule reindex:
 
 ```sh

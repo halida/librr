@@ -113,10 +113,13 @@ class Librr::Indexer
     @solr.commit
   end
 
-  def search(str)
+  def search(str, opts={})
     self.info "search: #{str}"
-    # rows: return all results
-    result = @solr.get 'select', params: {q: "line:#{str}", rows: (2 ** 31 - 1)}
+
+    rows = opts[:rows]
+    rows = (2 ** 31 - 1) if opts[:all]
+    result = @solr.get 'select', params: {q: "line:#{str}", rows: rows}
+
     result['response']['docs'].map do |row|
       [row['filename'], row['linenum'], row['line']].flatten
     end
