@@ -115,7 +115,8 @@ class Librr::Indexer
 
   def search(str)
     self.info "search: #{str}"
-    result = @solr.get 'select', params: {q: "line:#{str}"}
+    # rows: return all results
+    result = @solr.get 'select', params: {q: "line:#{str}", rows: (2 ** 31 - 1)}
     result['response']['docs'].map do |row|
       [row['filename'], row['linenum'], row['line']].flatten
     end
