@@ -9,6 +9,8 @@ require 'librr/settings'
 
 class Librr::Indexer
 
+  attr_accessor :solr_started
+
   def start &after_block
     @after_block = after_block
 
@@ -50,7 +52,7 @@ class Librr::Indexer
 
     def receive_data(data)
       # @indexer.info "solr output: #{data}"
-      if data =~ /Started SocketConnector/
+      if not @indexer.solr_started and data =~ /Started SocketConnector/
         EM.next_tick do
           @indexer.after_start
         end
@@ -61,6 +63,7 @@ class Librr::Indexer
 
 
   def after_start
+    @solr_started = true
     self.info 'after solr start'
 
     @solr = RSolr.connect(
