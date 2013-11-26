@@ -53,9 +53,7 @@ class Librr::Indexer
     def receive_data(data)
       # @indexer.info "solr output: #{data}"
       if not @indexer.solr_started and data =~ /Started SocketConnector/
-        EM.next_tick do
-          @indexer.after_start
-        end
+        @indexer.after_start
       end
     end
 
