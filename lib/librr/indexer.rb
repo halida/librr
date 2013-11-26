@@ -21,6 +21,9 @@ class Librr::Indexer
     end
   end
 
+  def info text
+    $logger.info(:Indexer){ text }
+  end
 
   module SolrManager
 
@@ -57,30 +60,35 @@ class Librr::Indexer
 
 
   def after_start
-    $logger.info(:Indexer){ 'after solr start' }
+    self.info 'after solr start'
+
     @solr = RSolr.connect(
                   url: "http://localhost:#{Settings.solr_port}/solr",
-                  read_timeout: 120, open_timeout: 120)
+                  read_timeout: 10, open_timeout: 10)
     @after_block.call if @after_block
   end
 
   def cleanup
-    $logger.info(:Indexer){ 'cleanup' }
+    self.info 'cleanup'
     @solr.delete_by_query '*:*'
     @solr.commit
   end
 
   def index_directory(dir)
-    $logger.info(:Indexer){ "index dir: #{dir}" }
+    self.info "index dir: #{dir}"
     files = Dir.glob(File.join(dir, "**/*"))
-    EM::Iterator.new(files).each do |file, iter|
-      self.index_file(file) if File.file?(file)
-      iter.next
-    end
+    EM::Iterator.new(files)
+      .each(
+       proc { |file, iter|
+              self.index_file(file) if File.file?(file)
+              iter.next
+            },
+       proc { self.info "index dir finished: #{dir}" }
+       )
   end
 
   def remove_index_directory(dir)
-    $logger.info(:Indexer){ "remove dir: #{dir}" }
+    self.info "remove dir: #{dir}"
     @solr.delete_by_query "filename:#{dir}*"
     @solr.commit
   end
@@ -89,7 +97,7 @@ class Librr::Indexer
     return if file =~ Settings.escape_files
 
     if File.exists?(file)
-      $logger.info(:Indexer){ "index file: #{file}" }
+      self.info "index file: #{file}"
       @solr.delete_by_query "filename:#{file}"
       File.readlines(file)
         .map{ |line| fix_encoding(line) }
@@ -97,14 +105,14 @@ class Librr::Indexer
         @solr.add id: SecureRandom.uuid, filename: file, linenum: num, line: line
       end
     else
-      $logger.info(:Indexer){ "remove index file: #{file}" }
+      self.info "remove index file: #{file}"
       @solr.delete_by_query "filename:#{file}"
     end
     @solr.commit
   end
 
   def search(str)
-    $logger.info(:Indexer){ "search: #{str}" }
+    self.info "search: #{str}"
     result = @solr.get 'select', params: {q: "line:#{str}"}
     result['response']['docs'].map do |row|
       [row['filename'], row['linenum'], row['line']].flatten
