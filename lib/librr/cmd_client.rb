@@ -17,20 +17,22 @@ class Librr::CmdClient
       self.run_cmd(:ping)
       return true
     rescue Errno::ECONNREFUSED => e
-      ServerStarter.start_server(sync)
-      return false
     end
+
+    ServerStarter.start_server(sync)
+    return false
   end
 
   def cmd cmd, params={}
     begin
-      self.run_cmd cmd, params
+      return self.run_cmd cmd, params
     rescue Errno::ECONNREFUSED => e
-      puts "server not start, starting.."
-      ServerStarter.start_server(false)
-      ServerStarter.wait_for_server_started do
-        self.run_cmd cmd, **params
-      end
+    end
+
+    puts "server not start, starting.."
+    ServerStarter.start_server(false)
+    ServerStarter.wait_for_server_started do
+      self.run_cmd cmd, **params
     end
   end
 
