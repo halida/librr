@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
+$:.unshift File.expand_path("../lib")
+
 require "rubygems"
 require "bundler/setup"
 
 require 'librr'
 require 'librr/cmd_parser'
+
 Librr::CmdParser.run!
