@@ -12,6 +12,8 @@ class Librr::Indexer
 
   attr_accessor :solr_started
 
+  SLICE_NUM = 300
+
   def self.pid_file
     File.join(Settings::CONFIG_PATH, 'solr.pid')
   end
@@ -107,11 +109,14 @@ class Librr::Indexer
     if File.exists?(file)
       self.info "index file: #{file}"
       @solr.delete_by_query "filename:#{file}"
-      data = File.readlines(file).each_with_index.map do |line, num|
-        line = fix_encoding(line).rstrip
-        {id: SecureRandom.uuid, filename: file, linenum: num, line: line}
+      File.readlines(file).each_slice(SLICE_NUM).each_with_index do |lines, i|
+        data = lines.each_with_index.map do |line, j|
+          num = SLICE_NUM * i + j
+          line = fix_encoding(line).rstrip
+          {id: SecureRandom.uuid, filename: file, linenum: num, line: line}
+        end
+        @solr.add data
       end
-      @solr.add data
     else
       self.info "remove index file: #{file}"
       @solr.delete_by_query "filename:#{file}"
