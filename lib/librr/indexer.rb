@@ -90,8 +90,11 @@ class Librr::Indexer
     EM::Iterator.new(files)
       .each(
        proc { |file, iter|
-              self.index_file(file) if File.file?(file)
-              iter.next
+              if File.file?(file)
+                self.index_file(file){ iter.next }
+              else
+                iter.next
+              end
             },
        proc { self.info "index dir finished: #{dir}" }
        )
@@ -103,25 +106,37 @@ class Librr::Indexer
     @solr.commit
   end
 
-  def index_file(file)
+  def index_file(file, &block)
     return if File.basename(file) =~ Settings.escape_files
 
-    if File.exists?(file)
-      self.info "index file: #{file}"
-      @solr.delete_by_query "filename:#{file}"
-      File.readlines(file).each_slice(SLICE_NUM).each_with_index do |lines, i|
-        data = lines.each_with_index.map do |line, j|
-          num = SLICE_NUM * i + j
-          line = fix_encoding(line).rstrip
-          {id: SecureRandom.uuid, filename: file, linenum: num, line: line}
-        end
-        @solr.add data
-      end
-    else
-      self.info "remove index file: #{file}"
-      @solr.delete_by_query "filename:#{file}"
-    end
+    @solr.delete_by_query "filename:#{file}"
     @solr.commit
+
+    unless File.exists?(file)
+      self.info "remove index file: #{file}"
+      block.call if block
+      return
+    end
+
+    self.info "index file: #{file}"
+    enum = File.readlines(file).each_slice(SLICE_NUM).each_with_index
+    EM::Iterator.new(enum)
+      .each(
+       proc { |d, iter|
+              lines, i = d
+              data = lines.each_with_index.map do |line, j|
+                num = SLICE_NUM * i + j
+                line = fix_encoding(line).rstrip
+                {id: SecureRandom.uuid, filename: file, linenum: num, line: line}
+              end
+              @solr.add data
+              @solr.commit
+              iter.next
+            },
+       proc {
+              block.call if block
+            }
+       )
   end
 
   def search(str, opts={})
