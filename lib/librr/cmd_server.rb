@@ -46,7 +46,9 @@ class Librr::CmdServer
 
       when 'stop'
         puts "server stopping.."
-        EM.stop
+        EM.next_tick{
+          EM.stop
+        }
 
       when 'add'
         EM.next_tick{
@@ -62,7 +64,9 @@ class Librr::CmdServer
         @@server.monitor.dirs.to_a
 
       when 'reindex'
-        @@server.monitor.reindex
+        EM.next_tick{
+          @@server.monitor.reindex
+        }
 
       when 'search'
         @@server.indexer.search(params['text'], rows: params['rows'], all: params['all'])
