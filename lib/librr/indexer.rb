@@ -5,6 +5,7 @@ require 'rsolr'
 
 require 'librr/lib'
 require 'librr/settings'
+require 'librr/delay_iterator'
 
 
 class Librr::Indexer
@@ -119,11 +120,12 @@ class Librr::Indexer
     end
 
     self.info "index file: #{file}"
-    enum = File.readlines(file).each_slice(SLICE_NUM).each_with_index
-    EM::Iterator.new(enum)
+    f = File.open(file)
+    enum = f.each.each_slice(SLICE_NUM).each_with_index
+    self.info "file indexing...."
+    DelayIterator.new(enum)
       .each(
-       proc { |d, iter|
-              lines, i = d
+       proc { |lines, i|
               data = lines.each_with_index.map do |line, j|
                 num = SLICE_NUM * i + j
                 line = fix_encoding(line).rstrip
@@ -131,9 +133,10 @@ class Librr::Indexer
               end
               @solr.add data
               @solr.commit
-              iter.next
+              self.info "working on lines: #{i*SLICE_NUM}"
             },
        proc {
+              f.close
               block.call if block
             }
        )
