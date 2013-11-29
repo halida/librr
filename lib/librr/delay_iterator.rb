@@ -7,13 +7,11 @@ class DelayIterator
     do_work = proc {
       begin
         item = @iter.next
+        proc.call(item)
+        EM.next_tick(&do_work)
       rescue StopIteration
         finished.call if finished
-        return
       end
-
-      proc.call(item)
-      EM.next_tick(&do_work)
     }
     EM.next_tick(&do_work)
   end
