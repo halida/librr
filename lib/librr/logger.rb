@@ -30,7 +30,7 @@ class Librr::Logger
   end
 
   def set_level level
-    self.level = level
+    self.logger.level = level
   end
 
 end

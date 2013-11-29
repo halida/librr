@@ -66,3 +66,14 @@ Schecdule reindex:
 ```sh
 librr reindex [dir]
 ```
+
+## development
+
+You can add `--debug` or `-d` argument to see what was happened under the hood: `librr add -d`.
+
+And for debugging, you can run daemon sync with a terminal, and check the debug information on the stdout:
+
+```
+librr daemon start --sync -d
+```
+

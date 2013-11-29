@@ -1,15 +1,16 @@
 require 'thor'
 require 'librr/cmd_client'
 require 'librr/settings'
+require 'librr/my_thor'
 
 
-class Librr::CmdParser < Thor
+class Librr::CmdParser < MyThor
 
   class << self
     attr_accessor :client
   end
 
-  class Daemon < Thor
+  class Daemon < MyThor
     option :sync, type: :boolean
     desc 'start [--sync]', 'start background daemon process'
     def start
@@ -33,6 +34,7 @@ class Librr::CmdParser < Thor
 
   desc "daemon SUBCOMMAND ...ARGS", "manage background daemon process"
   subcommand "daemon", Daemon
+
 
   desc 'add DIR', 'add directory for indexing'
   def add(dir)
