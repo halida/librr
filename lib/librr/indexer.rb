@@ -165,7 +165,7 @@ class Librr::Indexer
   def search(str, opts={})
     self.info "search: #{str}"
 
-    rows = opts[:rows]
+    rows = opts[:rows] || 30
     rows = (2 ** 31 - 1) if opts[:all]
 
     result = self.run_solr {

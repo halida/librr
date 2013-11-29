@@ -1,7 +1,11 @@
 # run command
 run:
-	ruby -I ./lib bin/librr search def
+	bin/librr search def
 server:
-	ruby -I ./lib bin/librr start --sync
+	bin/librr start --sync
 test:
 	rake spec
+gem:
+	gem build librr.gemspec
+install: gem
+	gem install --local *.gem
