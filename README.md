@@ -50,10 +50,16 @@ Using search:
 librr search emacs
 ~/Dropbox/sync/docs/emacs.org:26: xxx emacs
 ~/Dropbox/sync/docs/gtd.org:230: bbb emacs
+
 # or using sortcut:
 librr s emacs
+
 # set return result rows(default 30):
 librr search emacs --rows 100
+
+# under directory:
+librr search emacs --location ./gtd
+librr search emacs -l ./gtd
 ```
 
 Schecdule reindex:

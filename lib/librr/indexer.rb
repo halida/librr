@@ -138,7 +138,6 @@ class Librr::Indexer
     self.info "index file: #{file}"
     f = File.open(file)
     enum = f.each.each_slice(SLICE_NUM).each_with_index
-    self.info "file indexing...."
     DelayIterator.new(enum)
       .each(
        proc { |lines, i|
@@ -167,9 +166,11 @@ class Librr::Indexer
 
     rows = opts[:rows] || 30
     rows = (2 ** 31 - 1) if opts[:all]
+    query = "line:#{str}"
+    query += " filename:#{opts[:location]}*" if opts[:location]
 
     result = self.run_solr {
-      @solr.get 'select', params: {q: "line:#{str}", rows: rows}
+      @solr.get 'select', params: {q: query, rows: rows}
     }
 
     result['response']['docs'].map do |row|

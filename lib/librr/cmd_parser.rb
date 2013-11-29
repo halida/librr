@@ -43,10 +43,17 @@ class Librr::CmdParser < Thor
 
   option :rows, type: :numeric, default: 20
   option :all, type: :boolean
+  option :location, type: :string, aliases: "-l"
   desc 'search STRING', 'search string'
   def search(text)
+    location = (File.expand_path(options[:location]) if options[:location])
     puts "searching: #{text}"
-    results = @@client.cmd(:search, text: text, all: options[:all], rows: options[:rows])
+    results = @@client.cmd(:search,
+                       text: text,
+                       all: options[:all],
+                       rows: options[:rows],
+                       location: location,
+                       )
     if results.empty?
       puts "find no result"
     else

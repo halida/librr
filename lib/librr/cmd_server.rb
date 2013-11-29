@@ -69,7 +69,12 @@ class Librr::CmdServer
         }
 
       when 'search'
-        @@server.indexer.search(params['text'], rows: params['rows'], all: params['all'])
+        @@server.indexer.search(
+                         params['text'],
+                         rows: params['rows'],
+                         all: params['all'],
+                         location: params['location'],
+                         )
 
       else
         raise Exception, "cmd unknown: #{params['cmd']}"
