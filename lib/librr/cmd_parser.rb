@@ -5,40 +5,55 @@ require 'librr/settings'
 
 class Librr::CmdParser < Thor
 
-  option :sync, type: :boolean
-  desc 'daemon_start [--sync]', 'start background daemon process'
-  def daemon_start
-    if @@client.check_start(options[:sync])
-      puts 'daemon already started..'
+  class << self
+    attr_accessor :client
+  end
+
+  class Daemon < Thor
+    option :sync, type: :boolean
+    desc 'start [--sync]', 'start background daemon process'
+    def start
+      if Librr::CmdParser.client.check_start(options[:sync])
+        puts 'daemon already started..'
+      end
+    end
+
+    desc 'stop', 'stop background daemon process'
+    def stop
+      puts 'stopping daemon..'
+      Librr::CmdParser.client.cmd(:stop) rescue nil
+    end
+
+    desc 'restart', 'restart background daemon process'
+    def restart
+      puts 'daemon restarting..'
+      Librr::CmdParser.client.cmd(:restart) rescue nil
     end
   end
 
-  desc 'daemon_stop', 'stop background daemon process'
-  def daemon_stop
-    puts 'stopping daemon..'
-    @@client.cmd(:stop) rescue nil
-  end
+  desc "daemon SUBCOMMAND ...ARGS", "manage background daemon process"
+  subcommand "daemon", Daemon
 
   desc 'add DIR', 'add directory for indexing'
   def add(dir)
     puts "indexing: #{dir}"
-    @@client.cmd(:add, dir: File.expand_path(dir))
+    self.class.client.cmd(:add, dir: File.expand_path(dir))
   end
 
   desc 'remove DIR', 'remove directory from indexing'
   def remove(dir)
     puts "removing: #{dir}"
-    @@client.cmd(:remove, dir: File.expand_path(dir))
+    self.class.client.cmd(:remove, dir: File.expand_path(dir))
   end
 
   desc 'list', 'list all indexed directories'
   def list
-    puts @@client.cmd(:list)
+    puts self.class.client.cmd(:list)
   end
 
   desc "reindex", "reindex files"
   def reindex
-    @@client.cmd(:reindex)
+    self.class.client.cmd(:reindex)
   end
 
   option :rows, type: :numeric, default: 20
@@ -48,12 +63,12 @@ class Librr::CmdParser < Thor
   def search(text)
     location = (File.expand_path(options[:location]) if options[:location])
     puts "searching: #{text}"
-    results = @@client.cmd(:search,
-                       text: text,
-                       all: options[:all],
-                       rows: options[:rows],
-                       location: location,
-                       )
+    results = self.class.client.cmd(:search,
+                          text: text,
+                          all: options[:all],
+                          rows: options[:rows],
+                          location: location,
+                          )
     if results.empty?
       puts "find no result"
     else
@@ -62,7 +77,7 @@ class Librr::CmdParser < Thor
   end
 
   def self.run!
-    @@client = Librr::CmdClient.new('localhost', Settings.runner_port)
+    self.client = Librr::CmdClient.new('localhost', Settings.runner_port)
     self.start(ARGV)
   end
 

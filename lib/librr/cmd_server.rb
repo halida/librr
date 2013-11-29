@@ -50,6 +50,13 @@ class Librr::CmdServer
           EM.stop
         }
 
+      when 'restart'
+        puts "server restarting.."
+        EM.next_tick{
+          EM.stop
+          # todo
+        }
+
       when 'add'
         EM.next_tick{
           @@server.monitor.add_directory(params['dir'])
