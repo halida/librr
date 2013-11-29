@@ -26,13 +26,12 @@ gem install librr
 Start and stop background monitor process:
 
 ```sh
-librr start
-librr stop
+librr daemon_start
+librr daemon_stop
 ```
 
 It will start up automatically after first call to `librr search`,
 You don't need to start it manually.
-The background process name is: `librrd` and also start solr process.
 
 
 Config search directories:

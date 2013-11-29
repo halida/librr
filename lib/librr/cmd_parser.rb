@@ -6,16 +6,16 @@ require 'librr/settings'
 class Librr::CmdParser < Thor
 
   option :sync, type: :boolean
-  desc 'start [--sync]', 'start background process'
-  def start
+  desc 'daemon_start [--sync]', 'start background daemon process'
+  def daemon_start
     if @@client.check_start(options[:sync])
-      puts 'server already started..'
+      puts 'daemon already started..'
     end
   end
 
-  desc 'stop', 'stop background process'
-  def stop
-    puts 'stopping..'
+  desc 'daemon_stop', 'stop background daemon process'
+  def daemon_stop
+    puts 'stopping daemon..'
     @@client.cmd(:stop) rescue nil
   end
 

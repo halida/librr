@@ -13,7 +13,7 @@ module ServerStarter
   end
 
   def start_server(sync)
-    puts 'server starting..'
+    puts 'daemon starting..'
     return self.run if sync
 
     Process.fork do
@@ -32,13 +32,13 @@ module ServerStarter
   def wait_for_server_started &block
     5.times.each do
       sleep(2)
-      puts 'waiting for server starting..'
+      puts 'waiting for daemon starting..'
 
       if File.exists?(Settings::PID_FILE)
         return block.call if block
       end
     end
-    puts "server not starting, something is wrong."
+    puts "daemon not starting, something is wrong."
     exit
   end
 end

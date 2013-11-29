@@ -29,7 +29,7 @@ class Librr::CmdClient
     rescue Errno::ECONNREFUSED => e
     end
 
-    puts "server not start, starting.."
+    puts "daemon not start, starting.."
     ServerStarter.start_server(false)
     ServerStarter.wait_for_server_started do
       self.run_cmd cmd, **params
