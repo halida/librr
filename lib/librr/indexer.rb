@@ -16,7 +16,7 @@ class Librr::Indexer
   SLICE_NUM = 300
 
   def self.pid_file
-    File.join(Settings::CONFIG_PATH, 'solr.pid')
+    Settings.in_dir('solr.pid')
   end
 
   def start &after_block

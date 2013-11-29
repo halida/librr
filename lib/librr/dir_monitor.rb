@@ -72,7 +72,7 @@ class Librr::DirMonitor
   end
 
   def self.pid_file
-    File.join(Settings::CONFIG_PATH, 'dir_watcher.pid')
+    Settings.in_dir('dir_watcher.pid')
   end
 
   def start_process
