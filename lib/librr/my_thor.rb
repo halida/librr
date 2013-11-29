@@ -24,7 +24,7 @@ class MyThor < Thor
       define_method meth do |*args|
         # set logger
         if options[:debug]
-          Librr::Logger.instance.set_level Logger::DEBUG
+          Librr::Logger.instance.logger.level = Logger::DEBUG
         end
 
         self.send(old_meth, *args)

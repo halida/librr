@@ -2,7 +2,7 @@
 run:
 	bin/librr search def -d
 server:
-	bin/librr daemon start -s -d
+	bin/librr daemon start -s
 test:
 	rake spec
 gem:

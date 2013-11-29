@@ -18,7 +18,10 @@ module ServerStarter
 
   def start_server(sync)
     puts 'daemon starting..'
-    return self.run if sync
+    if sync
+      Librr::Logger.instance.logger.level = Logger::DEBUG
+      return self.run
+    end
 
     Process.fork do
       sess_id = Process.setsid

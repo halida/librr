@@ -45,13 +45,13 @@ class Librr::CmdServer
         'pong'
 
       when 'stop'
-        puts "daemon stopping.."
+        self.info "daemon stopping.."
         EM.next_tick{
           EM.stop
         }
 
       when 'restart'
-        puts "daemon restarting.."
+        self.info "daemon restarting.."
         EM.next_tick{
           EM.stop
           # todo
