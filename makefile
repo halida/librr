@@ -6,6 +6,9 @@ server:
 test:
 	rake spec
 gem:
+	rm *.gem
 	gem build librr.gemspec
+publish: gem
+	gem push *.gem
 install: gem
 	gem install --local *.gem
