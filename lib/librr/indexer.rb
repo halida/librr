@@ -38,15 +38,15 @@ class Librr::Indexer
     include Librr::Logger::ClassLogger
 
     def post_init
-      self.info "start solr"
+      self.debug "start solr"
     end
 
     def receive_data data
-      self.info "receiving solr: #{data}"
+      self.debug "receiving solr: #{data}"
     end
 
     def unbind
-      self.info "stop solr"
+      self.debug "stop solr"
       File.delete Librr::Indexer.pid_file rescue nil
     end
 
@@ -71,7 +71,7 @@ class Librr::Indexer
 
   def after_start
     @solr_started = true
-    self.info 'after solr start'
+    self.debug 'after solr start'
 
     @solr = RSolr.connect(
                   url: "http://localhost:#{Settings.solr_port}/solr",
@@ -90,7 +90,7 @@ class Librr::Indexer
   end
 
   def cleanup
-    self.info 'cleanup'
+    self.debug 'cleanup'
     self.run_solr {
       @solr.delete_by_query '*:*'
       @solr.commit
@@ -98,7 +98,7 @@ class Librr::Indexer
   end
 
   def index_directory(dir)
-    self.info "index dir: #{dir}"
+    self.debug "index dir: #{dir}"
     files = Dir.glob(File.join(dir, "**/*"))
     EM::Iterator.new(files)
       .each(
@@ -109,12 +109,12 @@ class Librr::Indexer
                 iter.next
               end
             },
-       proc { self.info "index dir finished: #{dir}" }
+       proc { self.debug "index dir finished: #{dir}" }
        )
   end
 
   def remove_index_directory(dir)
-    self.info "remove dir: #{dir}"
+    self.debug "remove dir: #{dir}"
     self.run_solr {
       @solr.delete_by_query "filename:#{dir}*"
       @solr.commit
@@ -130,12 +130,12 @@ class Librr::Indexer
     }
 
     unless File.exists?(file)
-      self.info "remove index file: #{file}"
+      self.debug "remove index file: #{file}"
       block.call if block
       return
     end
 
-    self.info "index file: #{file}"
+    self.debug "index file: #{file}"
     f = File.open(file)
     enum = f.each.each_slice(SLICE_NUM).each_with_index
     DelayIterator.new(enum)
@@ -152,7 +152,7 @@ class Librr::Indexer
                 @solr.commit
               }
 
-              self.info "working on lines: #{i*SLICE_NUM}"
+              self.debug "working on lines: #{i*SLICE_NUM}"
             },
        proc {
               f.close
@@ -162,7 +162,7 @@ class Librr::Indexer
   end
 
   def search(str, opts={})
-    self.info "search: #{str}"
+    self.debug "search: #{str}"
 
     rows = opts[:rows] || 30
     rows = (2 ** 31 - 1) if opts[:all]

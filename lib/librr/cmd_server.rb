@@ -39,7 +39,7 @@ class Librr::CmdServer
     end
 
     def handle_cmd(params)
-      self.info "on receive: #{params.to_s}"
+      self.debug "on receive: #{params.to_s}"
       case params['cmd']
       when 'ping'
         'pong'

@@ -6,6 +6,7 @@ require 'librr/server_starter'
 
 
 class Librr::CmdClient
+  include Librr::Logger::ClassLogger
 
   def initialize host, port
     @host = host
@@ -39,7 +40,7 @@ class Librr::CmdClient
   def run_cmd cmd, params={}
     params[:cmd] = cmd
     url = '/cmd'
-    $logger.debug(:CmdClient){ "sending: #{params}" }
+    self.debug("sending: #{params}")
     result = Net::HTTP.post_form(URI.parse("http://#{@host}:#{@port}#{url}"), params)
     JSON.load(result.body)
   end

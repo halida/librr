@@ -3,6 +3,8 @@
 require 'librr/lib'
 
 module ServerStarter
+  include Librr::Logger::ClassLogger
+
   extend self
 
   def run
@@ -20,7 +22,7 @@ module ServerStarter
       sess_id = Process.setsid
       Process.fork do
         redirect_std do
-          $logger.info "daemon started."
+          self.debug "daemon started."
           self.run
         end
         exit
