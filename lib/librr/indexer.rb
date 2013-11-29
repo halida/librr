@@ -142,7 +142,7 @@ class Librr::Indexer
       .each(
        proc { |lines, i|
               data = lines.each_with_index.map do |line, j|
-                num = SLICE_NUM * i + j
+                num = SLICE_NUM * i + j + 1
                 line = fix_encoding(line).rstrip
                 {id: SecureRandom.uuid, filename: file, linenum: num, line: line}
               end
