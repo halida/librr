@@ -24,11 +24,11 @@ class Librr::CmdParser < Thor
       Librr::CmdParser.client.cmd(:stop) rescue nil
     end
 
-    desc 'restart', 'restart background daemon process'
-    def restart
-      puts 'daemon restarting..'
-      Librr::CmdParser.client.cmd(:restart) rescue nil
-    end
+    # desc 'restart', 'restart background daemon process'
+    # def restart
+    #   puts 'daemon restarting..'
+    #   Librr::CmdParser.client.cmd(:restart) rescue nil
+    # end
   end
 
   desc "daemon SUBCOMMAND ...ARGS", "manage background daemon process"

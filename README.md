@@ -28,7 +28,6 @@ Start and stop background monitor process:
 ```sh
 librr daemon start
 librr daemon stop
-librr daemon restart
 ```
 
 It will start up automatically after first call to `librr search`,
