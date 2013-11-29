@@ -10,8 +10,16 @@ It use [solr](http://lucene.apache.org/solr/) for fulltext index.
 First you need to add a file or directory:
 
 ```sh
-librr add
+librr add ./gtd
 ```
+
+Wait a while for librr daemon to index the files, and find something you interested:
+
+```sh
+librr search emacs
+```
+
+Then you got the results! librr will monitor file changes in this directories.
 
 ## install
 
