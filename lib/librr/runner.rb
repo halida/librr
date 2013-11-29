@@ -35,7 +35,7 @@ class Librr::Runner
       indexer.start do
         monitor.start do
           server.start do
-            puts "server started"
+            puts "daemon started"
             self.write_pid
           end
         end
