@@ -60,7 +60,7 @@ class Librr::Indexer
     end
 
     def receive_data(data)
-      # @indexer.info "solr output: #{data}"
+      # File.open(Settings.in_dir('solr.log'), 'a+'){|f| f.write(data)}
       if not @indexer.solr_started and data =~ /Started SocketConnector/
         @indexer.after_start
       end
@@ -79,10 +79,23 @@ class Librr::Indexer
     @after_block.call if @after_block
   end
 
+  def run_solr &block
+    return block.call
+    retry_times = 2
+    begin
+      block.call
+    rescue Net::ReadTimeout
+      retry_times -= 1
+      retry if retry_times >= 0
+    end
+  end
+
   def cleanup
     self.info 'cleanup'
-    @solr.delete_by_query '*:*'
-    @solr.commit
+    self.run_solr {
+      @solr.delete_by_query '*:*'
+      @solr.commit
+    }
   end
 
   def index_directory(dir)
@@ -103,15 +116,19 @@ class Librr::Indexer
 
   def remove_index_directory(dir)
     self.info "remove dir: #{dir}"
-    @solr.delete_by_query "filename:#{dir}*"
-    @solr.commit
+    self.run_solr {
+      @solr.delete_by_query "filename:#{dir}*"
+      @solr.commit
+    }
   end
 
   def index_file(file, &block)
     return if File.basename(file) =~ Settings.escape_files
 
-    @solr.delete_by_query "filename:#{file}"
-    @solr.commit
+    self.run_solr {
+      @solr.delete_by_query "filename:#{file}"
+      @solr.commit
+    }
 
     unless File.exists?(file)
       self.info "remove index file: #{file}"
@@ -131,8 +148,12 @@ class Librr::Indexer
                 line = fix_encoding(line).rstrip
                 {id: SecureRandom.uuid, filename: file, linenum: num, line: line}
               end
-              @solr.add data
-              @solr.commit
+
+              self.run_solr {
+                @solr.add data
+                @solr.commit
+              }
+
               self.info "working on lines: #{i*SLICE_NUM}"
             },
        proc {
@@ -147,7 +168,10 @@ class Librr::Indexer
 
     rows = opts[:rows]
     rows = (2 ** 31 - 1) if opts[:all]
-    result = @solr.get 'select', params: {q: "line:#{str}", rows: rows}
+
+    result = self.run_solr {
+      @solr.get 'select', params: {q: "line:#{str}", rows: rows}
+    }
 
     result['response']['docs'].map do |row|
       [row['filename'], row['linenum'], row['line']].flatten
