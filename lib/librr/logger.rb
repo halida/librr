@@ -23,6 +23,10 @@ class Librr::Logger
     @logger ||= self.create_logger
   end
 
+  def logger=(logger)
+    @logger = logger
+  end
+
   def create_logger
     logger = Logger.new(STDOUT)
     logger.level = Logger::WARN

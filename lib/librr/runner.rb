@@ -10,6 +10,8 @@ EventMachine.kqueue = true if EventMachine.kqueue?
 
 
 class Librr::Runner
+  include Librr::Logger::ClassLogger
+
   def run!
     self.clear_pid
     @stoping = false
@@ -35,7 +37,7 @@ class Librr::Runner
       indexer.start do
         monitor.start do
           server.start do
-            puts "daemon started"
+            self.info "daemon started"
             self.write_pid
           end
         end

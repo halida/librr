@@ -19,6 +19,16 @@ def redirect_std
   [wi, ro, re]
 end
 
+def redirect_std_to_file(filename)
+  f = File.open(filename, 'a+')
+  f.sync = true
+
+  $stdout.reopen f
+  $stderr.reopen f
+
+  yield
+end
+
 
 def fix_encoding text
   # solution copy from:

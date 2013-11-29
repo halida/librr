@@ -1,6 +1,8 @@
 # copy from gem daemons file: daemonize.rb
 # todo: may has secruity risk
 require 'librr/lib'
+require 'librr/logger'
+require 'librr/settings'
 
 module ServerStarter
   include Librr::Logger::ClassLogger
@@ -22,6 +24,10 @@ module ServerStarter
       sess_id = Process.setsid
       Process.fork do
         redirect_std do
+          # for daemon, logger all information to log file
+          logger = Logger.new(Settings.in_dir('daemon.log'), 10, 1024000)
+          logger.level = Logger::DEBUG
+          Librr::Logger.instance.logger = logger
           self.debug "daemon started."
           self.run
         end
