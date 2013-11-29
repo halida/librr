@@ -11,7 +11,7 @@ class Librr::CmdParser < MyThor
   end
 
   class Daemon < MyThor
-    option :sync, type: :boolean
+    option :sync, type: :boolean, aliases: "-s"
     desc 'start [--sync]', 'start background daemon process'
     def start
       if Librr::CmdParser.client.check_start(options[:sync])
@@ -61,7 +61,7 @@ class Librr::CmdParser < MyThor
   option :rows, type: :numeric, default: 20
   option :all, type: :boolean
   option :location, type: :string, aliases: "-l"
-  desc 'search STRING', 'search string'
+  desc 'search STRING [--location DIR]', 'search string'
   def search(text)
     location = (File.expand_path(options[:location]) if options[:location])
     puts "searching: #{text}"

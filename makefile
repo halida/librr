@@ -1,8 +1,8 @@
 # run command
 run:
-	bin/librr search def
+	bin/librr search def -d
 server:
-	bin/librr daemon start --sync
+	bin/librr daemon start -s -d
 test:
 	rake spec
 gem:
