@@ -58,8 +58,8 @@ class Librr::CmdParser < MyThor
     self.class.client.cmd(:reindex)
   end
 
-  option :rows, type: :numeric, default: 20
-  option :all, type: :boolean
+  option :rows, type: :numeric, default: 20, aliases: "-r"
+  option :all, type: :boolean, aliases: "-a"
   option :location, type: :string, aliases: "-l"
   desc 'search STRING [--location DIR]', 'search string'
   def search(text)
