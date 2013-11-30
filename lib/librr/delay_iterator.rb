@@ -4,15 +4,18 @@ class DelayIterator
   end
 
   def each(proc, finished=nil)
-    do_work = proc {
+    @do_work = proc {
       begin
         item = @iter.next
-        proc.call(item)
-        EM.next_tick(&do_work)
+        proc.call(item, self)
       rescue StopIteration
         finished.call if finished
       end
     }
-    EM.next_tick(&do_work)
+    self.next
+  end
+
+  def next
+    EM.next_tick(&@do_work)
   end
 end

@@ -80,6 +80,9 @@ class Librr::Indexer
   end
 
   def run_solr &block
+    return
+    return block.call
+
     retry_times = 2
     begin
       block.call
@@ -99,8 +102,8 @@ class Librr::Indexer
 
   def index_directory(dir)
     self.debug "index dir: #{dir}"
-    files = Dir.glob(File.join(dir, "**/*"))
-    EM::Iterator.new(files)
+    files = Dir.glob(File.join(dir, "**/*")).each
+    DelayIterator.new(files)
       .each(
        proc { |file, iter|
               if File.file?(file)
@@ -122,7 +125,11 @@ class Librr::Indexer
   end
 
   def index_file(file, &block)
-    return if File.basename(file) =~ Settings.escape_files
+    if File.basename(file) =~ Settings.escape_files
+      self.debug "not index file: #{file}"
+      block.call if block
+      return
+    end
 
     self.run_solr {
       @solr.delete_by_query "filename:#{file}"
@@ -140,7 +147,9 @@ class Librr::Indexer
     enum = f.each.each_slice(SLICE_NUM).each_with_index
     DelayIterator.new(enum)
       .each(
-       proc { |lines, i|
+       proc { |d, iter|
+              lines, i = d
+
               data = lines.each_with_index.map do |line, j|
                 num = SLICE_NUM * i + j + 1
                 line = fix_encoding(line).rstrip
@@ -153,6 +162,7 @@ class Librr::Indexer
               }
 
               self.debug "working on lines: #{i*SLICE_NUM}"
+              iter.next
             },
        proc {
               f.close
