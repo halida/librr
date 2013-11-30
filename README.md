@@ -67,6 +67,10 @@ librr search emacs --rows 100
 # under directory:
 librr search emacs --location ./gtd
 librr search emacs -l ./gtd
+
+# use or not show color(default true):
+librr search emacs --color true
+librr search emacs -c false
 ```
 
 Schecdule reindex:

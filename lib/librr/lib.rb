@@ -46,3 +46,16 @@ def kill_process_by_file file
   rescue
   end
 end
+
+# colorize terminal
+class String
+  COLORS = {
+    :red => "\033[31m",
+    :green => "\033[32m",
+    :yellow => "\033[33m",
+    :blue => "\033[34m"
+  }
+  def colorize(color)
+    "#{COLORS[color]}#{self}\033[0m"
+  end
+end

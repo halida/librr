@@ -177,12 +177,32 @@ class Librr::Indexer
     query += " filename:#{opts[:location]}*" if opts[:location]
 
     result = self.run_solr {
-      @solr.get 'select', params: {q: query, rows: rows}
+      @solr.get 'select', params: {q: query, rows: rows, hl: true, "hl.fl" => "line"}
     }
+    # self.debug "solor result: #{result}"
 
-    result['response']['docs'].map do |row|
-      [row['filename'], row['linenum'], row['line']].flatten
+    # add highlighting to data
+    if opts[:highlight]
+      data = result['response']['docs']
+      data = data.map{ |d| [d['id'], d] }
+      data = Hash[ data ]
+      result['highlighting'].each do |id, v|
+        data[id]['highlight'] = v['line'][0]
+      end
+      # self.debug "appending hightlighting: #{data}"
     end
+
+    # fix line list
+    data = data.map do |k, d|
+      {
+        filename: d['filename'],
+        linenum: d['linenum'],
+        line: d['line'][0],
+        highlight: d['highlight'],
+      }
+    end
+    self.debug "final result: #{data}"
+    data
   end
 
 end

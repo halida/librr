@@ -61,20 +61,36 @@ class Librr::CmdParser < MyThor
   option :rows, type: :numeric, default: 20, aliases: "-r"
   option :all, type: :boolean, aliases: "-a"
   option :location, type: :string, aliases: "-l"
+  option :color, type: :boolean, aliases: "-c", default: true
   desc 'search STRING [--location DIR]', 'search string'
   def search(text)
     location = (File.expand_path(options[:location]) if options[:location])
     puts "searching: #{text}"
     results = self.class.client.cmd(:search,
-                          text: text,
-                          all: options[:all],
-                          rows: options[:rows],
-                          location: location,
+                                text: text,
+                                all: options[:all],
+                                rows: options[:rows],
+                                location: location,
+                                highlight: options[:color],
                           )
+
     if results.empty?
       puts "find no result"
     else
-      puts results.map{|v| v.join(":")}
+      results.each do |d|
+        if options[:color]
+          filename = d['filename'].colorize(:green)
+          linenum = d['linenum'].to_s.colorize(:yellow)
+          line = d['highlight'].gsub(/<librr_em>(?<m>.+)<\/librr_em>/) do |match|
+            $1.colorize(:red)
+          end
+        else
+          filename = d['filename']
+          linenum = d['linenum']
+          line = d['line']
+        end
+        puts "#{filename}:#{linenum}:#{line}"
+      end
     end
   end
 

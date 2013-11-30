@@ -12,6 +12,7 @@ solr.commit
 
 # query
 solr.get 'select', params: {q: 'line:daf'}
+solr.get 'select', params: {q: 'line:librr', hl: true, fl: 'line'}
 
 def fix_encoding text
   # solution copy from:
@@ -41,4 +42,4 @@ Dir.glob(File.join(dir, "**/*")).each do |file|
 end
 
 # return highlight
-solr.get 'select', params: {q: 'line:def', hl: true, "hl.q" => "line:def", "hl.snippets" => 1000, "hl.fl" => 'line'}
+solr.get 'select', params: {q: 'line:def', hl: true, "hl.fl" => "line"}

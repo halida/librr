@@ -81,6 +81,7 @@ class Librr::CmdServer
                          rows: params['rows'],
                          all: params['all'],
                          location: params['location'],
+                         highlight: params['highlight'],
                          )
 
       else
