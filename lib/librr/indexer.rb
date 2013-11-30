@@ -80,9 +80,6 @@ class Librr::Indexer
   end
 
   def run_solr &block
-    return
-    return block.call
-
     retry_times = 2
     begin
       block.call
