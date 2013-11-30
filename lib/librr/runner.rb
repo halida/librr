@@ -22,7 +22,7 @@ class Librr::Runner
         @stoping = true
 
         EM.stop
-        self.info "eventmachine stopping.."
+        puts "eventmachine stopping.."
         # todo commandline still show ^C?
         self.clear_pid
       end
