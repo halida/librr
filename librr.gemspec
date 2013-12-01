@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
   s.add_dependency "eventmachine_httpserver_update"
   s.add_dependency "rsolr-async"
   s.add_dependency "rb-fsevent"
+  s.add_dependency "rb-inotify"
   s.add_dependency "rack"
 
   s.add_development_dependency "rake"

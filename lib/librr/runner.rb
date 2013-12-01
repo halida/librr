@@ -28,7 +28,7 @@ class Librr::Runner
       end
 
       indexer = Librr::Indexer.new
-      monitor = Librr::DirMonitor.new
+      monitor = Librr::DirMonitor.get_monitor
       server  = Librr::CmdServer.new
 
       monitor.init(indexer: indexer)

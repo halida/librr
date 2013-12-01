@@ -17,6 +17,10 @@ class Librr::Logger
     def debug(text)
       self.logger.debug(self.class.name){ text }
     end
+
+    def warn(text)
+      self.logger.warn(self.class.name){ text }
+    end
   end
 
   def logger
