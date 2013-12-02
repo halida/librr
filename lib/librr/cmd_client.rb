@@ -50,7 +50,7 @@ class Librr::CmdClient
     wrong = proc { puts "daemon not starting, something is wrong." }
 
     ServerController.start_server(sync)
-    ServerController.wait_for_server_started(on, after, wrong)
+    ServerController.wait_for_server_started(on, after, wrong) unless sync
   end
 
   def stop
