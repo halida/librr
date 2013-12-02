@@ -4,6 +4,7 @@ class DelayIterator
   end
 
   def each(proc, finished=nil)
+    @finished = finished
     @do_work = proc {
       begin
         item = @iter.next
@@ -17,5 +18,9 @@ class DelayIterator
 
   def next
     EM.next_tick(&@do_work)
+  end
+
+  def end
+    @finished.call if @finished
   end
 end
