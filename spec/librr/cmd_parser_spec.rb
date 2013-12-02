@@ -15,8 +15,8 @@ describe Librr::CmdParser do
       [cmd, args]
     end
 
-    def check_start(sync)
-    end
+    def start(sync); end
+    def stop; end
   end
 
   def cmd args
@@ -25,15 +25,23 @@ describe Librr::CmdParser do
 
   before do
     @c = C.new
-    Librr::CmdParser.class_variable_set :@@client, @c
+    Librr::CmdParser.client = @c
   end
 
-  it 'start server' do
-    cmd(['start']).should == nil
-  end
+  describe Librr::CmdParser::Daemon do
+    describe :start do
+      specify do
+        # normal use
+        cmd(['daemon', 'start'])
+        cmd(['fuck'])
+      end
+    end
 
-  it 'stop server' do
-    cmd(['stop']).should == [:stop, {}]
+    describe :stop do
+      specify do
+        cmd(['stop']).should == nil
+      end
+    end
   end
 
   it 'add dir' do
@@ -56,7 +64,11 @@ describe Librr::CmdParser do
     @c.result = []
     cmd(['search', 'abc']).should == nil
 
-    @c.result = [['a/b.org', 12, 'aaa'], ['c/d.org', 14, 'bbb']]
-    cmd(['search', 'abc']).should == nil
+    @c.result = [
+      {'filename' => 'a/b.org', 'linenum' => 12, 'line' => 'aaa', 'highlight' => 'aaa'},
+      {'filename' => 'c/d.org', 'linenum' => 14, 'line' => 'bbb', 'highlight' => 'bbb'},
+    ]
+    cmd(['search', 'abc']).should == \
+    [{"filename"=>"a/b.org", "linenum"=>12, "line"=>"aaa", "highlight"=>"aaa"}, {"filename"=>"c/d.org", "linenum"=>14, "line"=>"bbb", "highlight"=>"bbb"}]
   end
 end

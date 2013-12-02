@@ -74,21 +74,22 @@ class Librr::CmdParser < MyThor
 
     if results.empty?
       puts "find no result"
-    else
-      results.each do |d|
-        if options[:color]
-          filename = d['filename'].colorize(:green)
-          linenum = d['linenum'].to_s.colorize(:yellow)
-          line = d['highlight'].gsub(/<librr_em>(?<m>.+)<\/librr_em>/) do |match|
-            $1.colorize(:red)
-          end
-        else
-          filename = d['filename']
-          linenum = d['linenum']
-          line = d['line']
+      return
+    end
+
+    results.each do |d|
+      if options[:color]
+        filename = d['filename'].colorize(:green)
+        linenum = d['linenum'].to_s.colorize(:yellow)
+        line = d['highlight'].gsub(/<librr_em>(?<m>.+)<\/librr_em>/) do |match|
+          $1.colorize(:red)
         end
-        puts "#{filename}:#{linenum}:#{line}"
+      else
+        filename = d['filename']
+        linenum = d['linenum']
+        line = d['line']
       end
+      puts "#{filename}:#{linenum}:#{line}"
     end
   end
 
