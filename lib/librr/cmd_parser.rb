@@ -14,13 +14,13 @@ class Librr::CmdParser < MyThor
     option :sync, type: :boolean, aliases: "-s"
     desc 'start [--sync]', 'start background daemon process'
     def start
-      Librr::CmdParser.client.check_start(options[:sync])
+      Librr::CmdParser.client.start(options[:sync])
     end
 
     desc 'stop', 'stop background daemon process'
     def stop
       puts 'stopping daemon..'
-      Librr::CmdParser.client.check_stop
+      Librr::CmdParser.client.stop
     end
 
     # desc 'restart', 'restart background daemon process'

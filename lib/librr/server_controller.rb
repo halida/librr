@@ -17,7 +17,6 @@ module ServerController
   end
 
   def start_server(sync)
-    puts 'daemon starting..'
     if sync
       Librr::Logger.instance.logger.level = Logger::DEBUG
       return self.run
@@ -40,29 +39,27 @@ module ServerController
     end
   end
 
-  def wait_for_server_started &block
-    5.times.each do
-      sleep(2)
-      puts 'waiting for daemon starting..'
+  def wait_for_server_started on, after, wrong
+    10.times.each do
+      sleep(1)
+      on.call
 
-      if File.exists?(Settings::PID_FILE)
-        return block.call if block
-      end
+      return after.call if File.exists?(Settings::PID_FILE)
     end
-    puts "daemon not starting, something is wrong."
+
+    wrong.call
     exit
   end
 
-  def wait_for_server_stopped &block
-    5.times.each do
-      sleep(2)
-      puts 'waiting for daemon stopped..'
+  def wait_for_server_stopped on, after, wrong
+    10.times.each do
+      sleep(1)
+      on.call
 
-      unless File.exists?(Settings::PID_FILE)
-        return block.call if block
-      end
+      return after.call unless File.exists?(Settings::PID_FILE)
     end
-    puts "daemon is still running, something is wrong."
+
+    wrong.call
     exit
   end
 end
