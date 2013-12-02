@@ -6,6 +6,7 @@ TESTDIR = "/home/halida/workspace/librr_coding/test"
 
 
 module NotifierClient
+  # todo use accessor
   def self.notifier=(notifier)
     @@notifier = notifier
   end

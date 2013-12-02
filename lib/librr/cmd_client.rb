@@ -2,7 +2,7 @@ require 'net/http'
 require 'json'
 
 require 'librr/logger'
-require 'librr/server_starter'
+require 'librr/server_controller'
 
 
 class Librr::CmdClient
@@ -13,15 +13,33 @@ class Librr::CmdClient
     @port = port
   end
 
-  def check_start(sync=false)
+  def server_started?
     begin
       self.run_cmd(:ping)
       return true
     rescue Errno::ECONNREFUSED => e
     end
 
-    ServerStarter.start_server(sync)
     return false
+  end
+
+  def check_start(sync=false)
+    if self.server_started?
+      puts 'daemon already started..'
+    else
+      ServerController.start_server(sync)
+    end
+  end
+
+  def check_stop
+    if self.server_started?
+      self.cmd(:stop) rescue nil
+      ServerController.wait_for_server_stopped do
+        puts "daemon stopped."
+      end
+    else
+      puts 'daemon already stopped..'
+    end
   end
 
   def cmd cmd, params={}
@@ -31,8 +49,8 @@ class Librr::CmdClient
     end
 
     puts "daemon not start, starting.."
-    ServerStarter.start_server(false)
-    ServerStarter.wait_for_server_started do
+    ServerController.start_server(false)
+    ServerController.wait_for_server_started do
       self.run_cmd cmd, **params
     end
   end

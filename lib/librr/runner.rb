@@ -46,6 +46,7 @@ class Librr::Runner
     end
 
     self.info "eventmachine stopped."
+    self.clear_pid
   end
 
   def write_pid

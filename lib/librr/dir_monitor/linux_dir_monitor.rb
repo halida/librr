@@ -6,6 +6,7 @@ require 'librr/dir_monitor/base'
 class LinuxDirMonitor < Librr::DirMonitor::Base
 
   module NotifierConnector
+    # todo use accessor
     def self.notifier=(notifier)
       @@notifier = notifier
     end

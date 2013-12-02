@@ -4,7 +4,7 @@ require 'librr/lib'
 require 'librr/logger'
 require 'librr/settings'
 
-module ServerStarter
+module ServerController
   include Librr::Logger::ClassLogger
 
   extend self
@@ -50,6 +50,19 @@ module ServerStarter
       end
     end
     puts "daemon not starting, something is wrong."
+    exit
+  end
+
+  def wait_for_server_stopped &block
+    5.times.each do
+      sleep(2)
+      puts 'waiting for daemon stopped..'
+
+      unless File.exists?(Settings::PID_FILE)
+        return block.call if block
+      end
+    end
+    puts "daemon is still running, something is wrong."
     exit
   end
 end
