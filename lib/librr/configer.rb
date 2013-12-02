@@ -19,7 +19,7 @@ module Configer
     if File.exists?(dc_file)
       Set.new(File.read(dc_file).split("\n")).delete("")
     else
-      []
+      Set.new
     end
   end
 

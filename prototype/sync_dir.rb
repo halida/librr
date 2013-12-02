@@ -17,6 +17,7 @@ def main
   fsevent.watch dir do |filename|
     puts "onchange file: #{filename}"
     system cmd
+    puts "finish run cmd: #{cmd}"
   end
 
   fsevent.run

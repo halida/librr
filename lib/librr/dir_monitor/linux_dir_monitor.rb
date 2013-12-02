@@ -5,6 +5,17 @@ require 'librr/dir_monitor/base'
 
 class LinuxDirMonitor < Librr::DirMonitor::Base
 
+  module NotifierConnector
+    def self.notifier=(notifier)
+      @@notifier = notifier
+    end
+
+    def notify_readable
+      @@notifier.process
+    end
+  end
+
+
   def init(opts)
     super(opts)
     @notifier = nil
@@ -12,34 +23,43 @@ class LinuxDirMonitor < Librr::DirMonitor::Base
 
   def start &after_block
 
-    self.stop_notifier if @notifier
+    self.stop_notifier
 
     @notifier = INotify::Notifier.new
 
     if self.dirs.empty?
       self.debug "DIR empty, not start monitoring."
-      after_block.call
+      after_block.call if after_block
       return
     end
 
-    notifier.watch("path/to/foo.txt", :modify) do |event|
-      self.debug "on change file or dir: #{event.name}"
-      self.on_change(event.name)
+    self.dirs.each do |dir|
+      @notifier.watch(dir, :modify, :moved_from, :moved_to, :create, :delete) do |event|
+        filename = File.join(dir, event.name)
+        self.debug "on change file or dir: #{filename}"
+        self.on_change(filename)
+      end
     end
 
-    EM.watch notifier.to_io do
-      notifier.process
-    end
+    NotifierConnector.notifier = @notifier
+    io = @notifier.to_io
+    @connection = EM.watch io, NotifierConnector
+    @connection.notify_readable = true
 
-    after_block.call
+    after_block.call if after_block
   end
 
   def stop_notifier
-    EM.detach notifier.to_io
+    return unless @notifier
+
+    @connection.detach
+    @connection = nil
+    @notifier.close
+    @notifier = nil
   end
 
   def on_change(file)
-    @monitor.indexer.index_file(file)
+    @indexer.index_file(file)
   end
 
 end
