@@ -27,12 +27,12 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.9.3'
 
   s.add_dependency "thor", "~> 0.8"
-  s.add_dependency "eventmachine"
+  s.add_dependency "eventmachine", "~> 1.0"
   s.add_dependency "eventmachine_httpserver_update"
-  s.add_dependency "rsolr-async"
-  s.add_dependency "rb-fsevent"
-  s.add_dependency "rb-inotify"
-  s.add_dependency "rack"
+  s.add_dependency "rsolr", "~> 1.0"
+  s.add_dependency "rb-fsevent", "~> 0.9"
+  s.add_dependency "rb-inotify", "~> 0.9"
+  s.add_dependency "rack", "~> 1.0"
 
   s.add_development_dependency "rake"
   s.add_development_dependency "sass"
