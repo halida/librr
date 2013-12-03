@@ -59,7 +59,7 @@ class Librr::CmdServer
 
       when 'add'
         EM.next_tick{
-          self.info puts "on add dir: #{params['dir']}"
+          self.info "on add dir: #{params['dir']}"
           @@server.monitor.add_directory(params['dir'])
         }
 

@@ -1,16 +1,19 @@
-require 'thor'
 require 'librr/cmd_client'
 require 'librr/settings'
 require 'librr/my_thor'
+require 'librr/displayer'
 
 
 class Librr::CmdParser < MyThor
+  include Librr::Displayer
 
   class << self
     attr_accessor :client
   end
 
   class Daemon < MyThor
+    include Librr::Displayer
+
     option :sync, type: :boolean, aliases: "-s"
     desc 'start [--sync]', 'start background daemon process'
     def start
@@ -19,13 +22,13 @@ class Librr::CmdParser < MyThor
 
     desc 'stop', 'stop background daemon process'
     def stop
-      puts 'stopping daemon..'
+      self.show 'stopping daemon..'
       Librr::CmdParser.client.stop
     end
 
     # desc 'restart', 'restart background daemon process'
     # def restart
-    #   puts 'daemon restarting..'
+    #   self.show 'daemon restarting..'
     #   Librr::CmdParser.client.cmd(:restart) rescue nil
     # end
   end
@@ -36,19 +39,19 @@ class Librr::CmdParser < MyThor
 
   desc 'add DIR', 'add directory for indexing'
   def add(dir)
-    puts "indexing: #{dir}"
+    self.show "adding: #{dir}"
     self.class.client.cmd(:add, dir: File.expand_path(dir))
   end
 
   desc 'remove DIR', 'remove directory from indexing'
   def remove(dir)
-    puts "removing: #{dir}"
+    self.show "removing: #{dir}"
     self.class.client.cmd(:remove, dir: File.expand_path(dir))
   end
 
   desc 'list', 'list all indexed directories'
   def list
-    puts self.class.client.cmd(:list)
+    self.show self.class.client.cmd(:list)
   end
 
   desc "reindex", "reindex files"
@@ -63,7 +66,7 @@ class Librr::CmdParser < MyThor
   desc 'search STRING [--location DIR]', 'search string'
   def search(text)
     location = (File.expand_path(options[:location]) if options[:location])
-    puts "searching: #{text}"
+    self.show "searching: #{text}"
     results = self.class.client.cmd(:search,
                                 text: text,
                                 all: options[:all],
@@ -73,7 +76,7 @@ class Librr::CmdParser < MyThor
                           )
 
     if results.empty?
-      puts "find no result"
+      self.show "found no result"
       return
     end
 
@@ -89,7 +92,7 @@ class Librr::CmdParser < MyThor
         linenum = d['linenum']
         line = d['line']
       end
-      puts "#{filename}:#{linenum}:#{line}"
+      self.show "#{filename}:#{linenum}:#{line}"
     end
   end
 
