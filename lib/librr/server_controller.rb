@@ -4,6 +4,7 @@ require 'librr/lib'
 require 'librr/logger'
 require 'librr/settings'
 
+
 module ServerController
   include Librr::Logger::ClassLogger
 
@@ -25,11 +26,13 @@ module ServerController
     Process.fork do
       sess_id = Process.setsid
       Process.fork do
+        # close all IO
         redirect_std do
           # for daemon, logger all information to log file
           logger = Logger.new(Settings.in_dir('daemon.log'), 10, 1024000)
           logger.level = Logger::DEBUG
           Librr::Logger.instance.logger = logger
+
           self.debug "daemon started."
           self.run
         end
@@ -39,7 +42,7 @@ module ServerController
     end
   end
 
-  def wait_for_server_started on, after, wrong
+  def wait_for_started on, after, wrong
     10.times.each do
       sleep(1)
       on.call
@@ -51,7 +54,7 @@ module ServerController
     exit
   end
 
-  def wait_for_server_stopped on, after, wrong
+  def wait_for_stopped on, after, wrong
     10.times.each do
       sleep(1)
       on.call

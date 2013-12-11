@@ -22,6 +22,7 @@ describe Librr::Displayer do
   end
 
   it 'show text to the stdout' do
+    Librr::Displayer.save_output = false
     out = get_stdout do
       T.new.work
     end
@@ -30,6 +31,7 @@ describe Librr::Displayer do
 
   it 'redirect show to the output' do
     described_class.save_output = true
+    described_class.clear_output
     T.new.work
     described_class.output.should == ['work']
   end

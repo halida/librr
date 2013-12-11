@@ -27,7 +27,7 @@ class Librr::CmdClient
     wrong = proc { self.show "daemon not starting, something is wrong." }
 
     ServerController.start_server(false)
-    ServerController.wait_for_server_started(on, after, wrong)
+    ServerController.wait_for_started(on, after, wrong)
   end
 
   def server_started?
@@ -52,7 +52,7 @@ class Librr::CmdClient
     wrong = proc { self.show "daemon not starting, something is wrong." }
 
     ServerController.start_server(sync)
-    ServerController.wait_for_server_started(on, after, wrong) unless sync
+    ServerController.wait_for_started(on, after, wrong) unless sync
   end
 
   def stop
@@ -65,7 +65,7 @@ class Librr::CmdClient
     on = proc { self.show 'waiting for daemon stopped..' }
     after = proc { self.show "daemon stopped." }
     wrong = proc { self.show "daemon is still running, something is wrong." }
-    ServerController.wait_for_server_stopped(on, after, wrong)
+    ServerController.wait_for_stopped(on, after, wrong)
   end
 
   protected

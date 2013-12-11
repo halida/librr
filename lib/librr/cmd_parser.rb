@@ -2,6 +2,7 @@ require 'librr/cmd_client'
 require 'librr/settings'
 require 'librr/my_thor'
 require 'librr/displayer'
+require 'librr/colorize'
 
 
 class Librr::CmdParser < MyThor
@@ -82,10 +83,10 @@ class Librr::CmdParser < MyThor
 
     results.each do |d|
       if options[:color]
-        filename = d['filename'].colorize(:green)
-        linenum = d['linenum'].to_s.colorize(:yellow)
+        filename = Colorize.set d['filename'], :green
+        linenum = Colorize.set d['linenum'], :yellow
         line = d['highlight'].gsub(/<librr_em>(?<m>.+)<\/librr_em>/) do |match|
-          $1.colorize(:red)
+          Colorize.set $1, :red
         end
       else
         filename = d['filename']
